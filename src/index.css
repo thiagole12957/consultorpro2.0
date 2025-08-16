@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar styles */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(156 163 175) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgb(156 163 175);
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(107 114 128);
+}
+
+/* Responsive button utilities */
+.btn-responsive {
+  @apply px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base;
+}
+
+.btn-responsive-sm {
+  @apply px-2 py-1 text-xs sm:px-3 sm:py-2 sm:text-sm;
+}
+
+/* Card responsive utilities */
+.card-responsive {
+  @apply p-4 sm:p-6;
+}
+
+/* Table responsive utilities */
+.table-responsive {
+  @apply overflow-x-auto scrollbar-thin;
+}
+
+/* Modal responsive utilities */
+.modal-responsive {
+  @apply w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl;
+}
+
+/* Sidebar responsive utilities */
+.sidebar-mobile {
+  @apply fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col h-full;
+}
+
+.sidebar-desktop {
+  @apply static w-64 bg-white border-r border-gray-200 flex flex-col h-screen;
+}
+
+/* Fix para altura da sidebar */
+@media (max-width: 1023px) {
+  .sidebar-mobile {
+    height: 100vh;
+    height: 100dvh; /* Para dispositivos móveis modernos */
+  }
+}
