@@ -809,9 +809,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [vendas, setVendas] = useState<Venda[]>([]);
 
   // Estados de cobrança
-  // Agenda
-  const [eventosAgenda, setEventosAgenda] = useState<EventoAgenda[]>([]);
-  
   const [carteirasCobranca, setCarteirasCobranca] = useState<CarteiraCobranca[]>([
     {
       id: '1',
@@ -1280,6 +1277,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     setFaturas(prev => [...prev, ...novasFaturas]);
     atualizarVenda(vendaId, { status: 'Faturada' });
+  };
+
+  // Funções da Agenda
+  const adicionarEventoAgenda = (evento: EventoAgenda) => {
+    setEventosAgenda(prev => [...prev, evento]);
+  };
+
+  const atualizarEventoAgenda = (id: string, dados: Partial<EventoAgenda>) => {
+    setEventosAgenda(prev => prev.map(evento => 
+      evento.id === id ? { ...evento, ...dados } : evento
+    ));
+  };
+
+  const excluirEventoAgenda = (id: string) => {
+    setEventosAgenda(prev => prev.filter(evento => evento.id !== id));
   };
 
   // Funções de licenças
