@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Save, Plus, Trash2, Mail, MessageSquare, Phone, Settings, Copy, Wand2 } from 'lucide-react';
+import { X, Save, Plus, Trash2, Mail, MessageSquare, Phone, Settings, Copy, Wand2, Shield } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 import { RegraCobranca, CanalCobranca, TemplateCobranca } from '../../types/cobranca';
 
