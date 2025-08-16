@@ -7,7 +7,7 @@ import { AgendaView } from './AgendaView';
 import { EventoAgenda } from '../../types/agenda';
 
 export function AgendaDashboard() {
-  const { eventosAgenda, usuarioLogado, reunioes } = useApp();
+  const { eventosAgenda = [], usuarioLogado, reunioes = [] } = useApp();
   const [showEventoModal, setShowEventoModal] = useState(false);
   const [eventoEdit, setEventoEdit] = useState<EventoAgenda | null>(null);
   const [visualizacao, setVisualizacao] = useState<'mes' | 'semana' | 'dia' | 'agenda'>('mes');
