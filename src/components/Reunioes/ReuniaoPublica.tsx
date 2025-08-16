@@ -425,7 +425,10 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
 
               {erro && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                  <p className="text-sm text-red-800">{erro}</p>
+                  <div className="flex items-center space-x-2">
+                    <AlertTriangle className="w-4 h-4 text-red-600" />
+                    <p className="text-sm text-red-800">{erro}</p>
+                  </div>
                 </div>
               )}
 

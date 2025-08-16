@@ -133,7 +133,15 @@ export function VideoConferencia({ reuniaoId, participantes, onEncerrar }: Video
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-900 z-50">
+    <div className="fixed inset-0 bg-gray-900 z-50" style={{ minHeight: '100vh' }}>
+      {/* Debug Info */}
+      <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white p-2 rounded text-xs z-10">
+        <div>Reunião: {reuniaoId}</div>
+        <div>Participantes: {participantes.length}</div>
+        <div>Vídeo: {isVideoOn ? 'ON' : 'OFF'}</div>
+        <div>Áudio: {isAudioOn ? 'ON' : 'OFF'}</div>
+      </div>
+      
       {/* Header */}
       <div className="bg-gray-800 text-white p-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">

@@ -23,5 +23,6 @@ export function ReuniaoRouter() {
     );
   }
 
+  console.log('ReuniaoRouter: renderizando ReuniaoPublica com ID:', reuniaoId);
   return <ReuniaoPublica reuniaoId={reuniaoId} />;
 }

@@ -213,9 +213,6 @@ interface AppContextType {
   condicoesPagamento: CondicaoPagamento[];
   vendas: Venda[];
   
-  // Agenda
-  eventosAgenda: EventoLinhaTempo[];
-  
   // Estados de cobrança
   carteirasCobranca: CarteiraCobranca[];
   modelosContrato: ModeloContrato[];
@@ -332,6 +329,11 @@ interface AppContextType {
   excluirCondicaoPagamento: (id: string) => void;
   adicionarVenda: (venda: Venda) => void;
   atualizarVenda: (id: string, dados: Partial<Venda>) => void;
+  
+  // Agenda
+  adicionarEventoAgenda: (evento: any) => void;
+  atualizarEventoAgenda: (id: string, dados: any) => void;
+  excluirEventoAgenda: (id: string) => void;
   
   // Funções de cobrança
   adicionarCarteiraCobranca: (carteira: CarteiraCobranca) => void;
@@ -810,9 +812,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   ]);
 
   const [vendas, setVendas] = useState<Venda[]>([]);
-
-  // Agenda
-  const [eventosAgenda, setEventosAgenda] = useState<EventoLinhaTempo[]>([]);
 
   // Estados de cobrança
   const [carteirasCobranca, setCarteirasCobranca] = useState<CarteiraCobranca[]>([
@@ -1623,6 +1622,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ));
   };
 
+  // Funções de agenda
+  const adicionarEventoAgenda = (evento: any) => {
+    // Implementar lógica para adicionar evento na agenda
+    console.log('Adicionando evento na agenda:', evento);
+  };
+
+  const atualizarEventoAgenda = (id: string, dados: any) => {
+    // Implementar lógica para atualizar evento na agenda
+    console.log('Atualizando evento na agenda:', id, dados);
+  };
+
+  const excluirEventoAgenda = (id: string) => {
+    // Implementar lógica para excluir evento na agenda
+    console.log('Excluindo evento na agenda:', id);
+  };
+
   // Funções de cobrança
   const adicionarCarteiraCobranca = (carteira: CarteiraCobranca) => {
     setCarteirasCobranca(prev => [...prev, carteira]);
@@ -1784,9 +1799,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     condicoesPagamento,
     vendas,
     
-    // Agenda
-    eventosAgenda,
-    
     // Estados de cobrança
     carteirasCobranca,
     modelosContrato,
@@ -1901,6 +1913,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     excluirCondicaoPagamento,
     adicionarVenda,
     atualizarVenda,
+    
+    // Agenda
+    adicionarEventoAgenda,
+    atualizarEventoAgenda,
+    excluirEventoAgenda,
     
     // Funções de cobrança
     adicionarCarteiraCobranca,

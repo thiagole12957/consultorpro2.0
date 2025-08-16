@@ -286,7 +286,15 @@ export function VideoConferenciaAvancada({ reuniaoId, participantes, onEncerrar 
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-900 z-50">
+    <div className="fixed inset-0 bg-gray-900 z-50" style={{ minHeight: '100vh' }}>
+      {/* Debug Info */}
+      <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white p-2 rounded text-xs z-10">
+        <div>Reunião Avançada: {reuniaoId}</div>
+        <div>Participantes: {participantes.length}</div>
+        <div>IA: {isRecording ? 'ATIVA' : 'INATIVA'}</div>
+        <div>Qualidade: {networkQuality}</div>
+      </div>
+      
       {/* Header Avançado */}
       <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-4 flex items-center justify-between border-b border-gray-700">
         <div className="flex items-center space-x-6">
