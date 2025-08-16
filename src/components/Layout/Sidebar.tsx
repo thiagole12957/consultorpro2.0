@@ -19,7 +19,8 @@ import {
   Brain,
   Zap,
   Crown,
-  LogOut
+  LogOut,
+  Calendar
 } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 
@@ -39,6 +40,7 @@ export function Sidebar({ activeTab, setActiveTab, isOpen, onToggle }: SidebarPr
     { id: 'clientes', label: 'Clientes', icon: Users },
     { id: 'consultoria-mensal', label: 'Consultoria Mensal', icon: Brain },
     { id: 'contratos', label: 'Contratos', icon: FileText },
+    { id: 'agenda', label: 'Agenda Pessoal', icon: Calendar },
     { id: 'vendas', label: 'Vendas', icon: ShoppingCart },
     { id: 'planos-venda', label: 'Planos de Venda', icon: Target },
     { id: 'produtos', label: 'Produtos & Serviços', icon: Package },

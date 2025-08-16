@@ -809,6 +809,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [vendas, setVendas] = useState<Venda[]>([]);
 
   // Estados de cobrança
+  // Agenda
+  const [eventosAgenda, setEventosAgenda] = useState<EventoAgenda[]>([]);
+  
   const [carteirasCobranca, setCarteirasCobranca] = useState<CarteiraCobranca[]>([
     {
       id: '1',

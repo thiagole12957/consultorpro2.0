@@ -92,6 +92,11 @@ function AppContent() {
           subtitle: 'Gerencie seus clientes e prospects',
           showAdd: true 
         };
+      case 'agenda':
+        return { 
+          title: 'Agenda Pessoal', 
+          subtitle: 'Organize seus compromissos e reuniões'
+        };
       case 'consultoria-mensal':
         return { 
           title: 'Painel de Consultoria Mensal', 
