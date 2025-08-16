@@ -702,6 +702,22 @@ export function ConfiguracoesCobrancaView() {
               </div>
             </div>
           </div>
+          
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="flex items-start space-x-2">
+              <MessageSquare className="w-5 h-5 text-green-600 mt-0.5" />
+              <div className="text-sm">
+                <p className="font-medium text-green-900">WhatsApp Web - Boas Práticas</p>
+                <ul className="text-green-800 mt-1 space-y-1">
+                  <li>• Mantenha o celular conectado à internet</li>
+                  <li>• Não feche o WhatsApp no celular</li>
+                  <li>• Monitore a bateria do dispositivo</li>
+                  <li>• Reconecte se a sessão expirar</li>
+                  <li>• Use apenas em redes seguras</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
