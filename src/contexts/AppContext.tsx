@@ -213,6 +213,9 @@ interface AppContextType {
   condicoesPagamento: CondicaoPagamento[];
   vendas: Venda[];
   
+  // Agenda
+  eventosAgenda: EventoLinhaTempo[];
+  
   // Estados de cobrança
   carteirasCobranca: CarteiraCobranca[];
   modelosContrato: ModeloContrato[];
@@ -808,6 +811,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const [vendas, setVendas] = useState<Venda[]>([]);
 
+  // Agenda
+  const [eventosAgenda, setEventosAgenda] = useState<EventoLinhaTempo[]>([]);
+
   // Estados de cobrança
   const [carteirasCobranca, setCarteirasCobranca] = useState<CarteiraCobranca[]>([
     {
@@ -1277,21 +1283,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     setFaturas(prev => [...prev, ...novasFaturas]);
     atualizarVenda(vendaId, { status: 'Faturada' });
-  };
-
-  // Funções da Agenda
-  const adicionarEventoAgenda = (evento: EventoAgenda) => {
-    setEventosAgenda(prev => [...prev, evento]);
-  };
-
-  const atualizarEventoAgenda = (id: string, dados: Partial<EventoAgenda>) => {
-    setEventosAgenda(prev => prev.map(evento => 
-      evento.id === id ? { ...evento, ...dados } : evento
-    ));
-  };
-
-  const excluirEventoAgenda = (id: string) => {
-    setEventosAgenda(prev => prev.filter(evento => evento.id !== id));
   };
 
   // Funções de licenças
@@ -1792,6 +1783,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // Estados de vendas
     condicoesPagamento,
     vendas,
+    
+    // Agenda
+    eventosAgenda,
     
     // Estados de cobrança
     carteirasCobranca,
