@@ -36,6 +36,7 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
 
   const verificarReuniao = async () => {
     setCarregando(true);
+    setErro(''); // Limpar erro anterior
     
     try {
       // Simular busca da reunião
@@ -64,33 +65,47 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
       };
       
       // Buscar reunião real do contexto se disponível
-      const reuniaoReal = JSON.parse(localStorage.getItem('reunioes') || '[]')
-        .find((r: any) => r.id === reuniaoId);
+      try {
+        const reuniaoReal = JSON.parse(localStorage.getItem('reunioes') || '[]')
+          .find((r: any) => r.id === reuniaoId);
       
-      if (reuniaoReal) {
-        reuniaoData.objetivo = reuniaoReal.objetivo;
-        reuniaoData.responsavel = reuniaoReal.responsavel;
-        reuniaoData.temSenha = reuniaoReal.configuracoes?.temSenha || false;
-        reuniaoData.senhaReuniao = reuniaoReal.configuracoes?.senhaReuniao || '';
+        if (reuniaoReal) {
+          reuniaoData.objetivo = reuniaoReal.objetivo;
+          reuniaoData.responsavel = reuniaoReal.responsavel;
+          reuniaoData.temSenha = reuniaoReal.configuracoes?.temSenha || false;
+          reuniaoData.senhaReuniao = reuniaoReal.configuracoes?.senhaReuniao || '';
+        }
+      } catch (parseError) {
+        console.log('Erro ao buscar reunião do localStorage, usando dados padrão');
       }
       
       setReuniao(reuniaoData);
       
       // Verificar se usuário está logado (simulação)
-      const usuarioLogado = localStorage.getItem('usuario_logado');
+      try {
+        const usuarioLogado = localStorage.getItem('usuario_logado');
       
-      if (usuarioLogado) {
-        // Usuário logado - entrar direto na reunião
-        setEtapa('reuniao');
-      } else if (reuniaoData.temSenha) {
-        // Reunião com senha - pedir senha primeiro
-        setEtapa('senha');
-      } else {
-        // Reunião sem senha - pedir dados do convidado
-        setEtapa('dados-convidado');
+        if (usuarioLogado) {
+          // Usuário logado - entrar direto na reunião
+          setEtapa('reuniao');
+        } else if (reuniaoData.temSenha) {
+          // Reunião com senha - pedir senha primeiro
+          setEtapa('senha');
+        } else {
+          // Reunião sem senha - pedir dados do convidado
+          setEtapa('dados-convidado');
+        }
+      } catch (storageError) {
+        // Se houver erro no localStorage, assumir que não está logado
+        if (reuniaoData.temSenha) {
+          setEtapa('senha');
+        } else {
+          setEtapa('dados-convidado');
+        }
       }
       
     } catch (error) {
+      console.error('Erro ao verificar reunião:', error);
       setErro('Reunião não encontrada ou link inválido');
     } finally {
       setCarregando(false);
@@ -98,7 +113,17 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
   };
 
   const verificarSenha = () => {
-    if (senhaInformada.trim() === reuniao.senhaReuniao.trim()) {
+    if (!reuniao) {
+      setErro('Dados da reunião não carregados');
+      return;
+    }
+    
+    const senhaCorreta = reuniao.senhaReuniao?.trim() || '';
+    const senhaDigitada = senhaInformada.trim();
+    
+    console.log('Verificando senha:', { senhaDigitada, senhaCorreta }); // Debug
+    
+    if (senhaDigitada === senhaCorreta) {
       setEtapa('dados-convidado');
       setErro(''); // Limpar erro anterior
     } else {
@@ -115,20 +140,32 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
     setErro(''); // Limpar erro anterior
     
     // Salvar dados do convidado
-    localStorage.setItem('convidado_reuniao', JSON.stringify({
-      ...dadosConvidado,
-      reuniaoId,
-      dataEntrada: new Date().toISOString()
-    }));
+    try {
+      localStorage.setItem('convidado_reuniao', JSON.stringify({
+        ...dadosConvidado,
+        reuniaoId,
+        dataEntrada: new Date().toISOString()
+      }));
+    } catch (storageError) {
+      console.warn('Erro ao salvar dados do convidado:', storageError);
+    }
     
     setEtapa('reuniao');
   };
 
   const sairReuniao = () => {
-    localStorage.removeItem('convidado_reuniao');
+    try {
+      localStorage.removeItem('convidado_reuniao');
+    } catch (error) {
+      console.warn('Erro ao limpar dados do convidado:', error);
+    }
     window.close(); // Tentar fechar a aba
     // Se não conseguir fechar, redirecionar para página inicial
-    window.location.href = '/';
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = '/';
+    }
   };
 
   if (carregando) {
@@ -143,7 +180,7 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
     );
   }
 
-  if (erro && etapa === 'verificacao') {
+  if (erro && !reuniao) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-900 via-red-800 to-red-900 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl p-8 text-center max-w-md w-full">
@@ -158,6 +195,19 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
           >
             Voltar ao Sistema
           </button>
+        </div>
+      </div>
+    );
+  }
+  
+  // Se não há reunião carregada ainda, mostrar loading
+  if (!reuniao) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex items-center justify-center">
+        <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 text-center">
+          <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-white mb-2">Carregando reunião...</h2>
+          <p className="text-blue-200">Verificando dados da reunião</p>
         </div>
       </div>
     );
@@ -228,6 +278,11 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Reunião Protegida</h3>
                 <p className="text-gray-600">Esta reunião requer senha para acesso</p>
+                {reuniao.senhaReuniao && (
+                  <p className="text-xs text-gray-500 mt-2">
+                    Dica para teste: {reuniao.senhaReuniao}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -242,6 +297,7 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-lg tracking-widest"
                   placeholder="••••••"
                   maxLength={10}
+                  autoFocus
                 />
               </div>
 
