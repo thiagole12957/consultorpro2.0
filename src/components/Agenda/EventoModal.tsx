@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Save, Calendar, Clock, Users, Bell, Repeat, MapPin, Tag } from 'lucide-react';
+import { X, Save, Calendar, Clock, Users, Bell, Repeat, MapPin, Tag, Plus } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 import { EventoAgenda, NotificacaoEvento, RecorrenciaEvento } from '../../types/agenda';
 
