@@ -410,12 +410,35 @@ export function ConfiguracoesCobrancaView() {
                     <span className="text-gray-600">Sessão:</span>
                     <span className="text-green-600 font-medium">Válida</span>
                   </div>
+                  {configuracoes.whatsappWeb.deviceName && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Dispositivo:</span>
+                      <span className="text-gray-900">{configuracoes.whatsappWeb.deviceName}</span>
+                    </div>
+                  )}
+                  {configuracoes.whatsappWeb.batteryLevel > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Bateria do celular:</span>
+                      <span className={`font-medium ${
+                        configuracoes.whatsappWeb.batteryLevel > 20 ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {configuracoes.whatsappWeb.batteryLevel}%
+                      </span>
+                    </div>
+                  )}
                   
                   <div className="pt-3 border-t border-gray-200">
                     <button
                       onClick={() => setConfiguracoes(prev => ({
                         ...prev,
-                        whatsappWeb: { ...prev.whatsappWeb, sessaoAtiva: false, ultimaConexao: '' }
+                        whatsappWeb: { 
+                          ...prev.whatsappWeb, 
+                          sessaoAtiva: false, 
+                          ultimaConexao: '', 
+                          qrCodeUrl: '',
+                          deviceName: '',
+                          batteryLevel: 0
+                        }
                       }))}
                       className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors text-sm"
                     >
@@ -448,24 +471,44 @@ export function ConfiguracoesCobrancaView() {
                             <MessageSquare className="w-12 h-12 mx-auto mb-2 text-gray-400" />
                             <p className="text-sm text-gray-600">QR Code apareceria aqui</p>
                             <p className="text-xs text-gray-500 mt-1">Escaneie com WhatsApp</p>
+                            <div className="mt-3 text-xs text-gray-400">
+                              <p>Dispositivo: {configuracoes.whatsappWeb.deviceName}</p>
+                              <p>Gerado: {configuracoes.whatsappWeb.lastSeen}</p>
+                            </div>
                           </div>
                         </div>
                       </div>
                       <p className="text-sm text-gray-600 mb-3">Escaneie o QR Code com seu WhatsApp</p>
-                      <button
-                        onClick={() => setConfiguracoes(prev => ({
-                          ...prev,
-                          whatsappWeb: { 
-                            ...prev.whatsappWeb, 
-                            qrCodeUrl: '',
-                            sessaoAtiva: true,
-                            ultimaConexao: new Date().toLocaleString('pt-BR')
-                          }
-                        }))}
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
-                      >
-                        Simular Conexão
-                      </button>
+                      <div className="flex space-x-2 justify-center">
+                        <button
+                          onClick={() => setConfiguracoes(prev => ({
+                            ...prev,
+                            whatsappWeb: { 
+                              ...prev.whatsappWeb, 
+                              qrCodeUrl: '',
+                              sessaoAtiva: true,
+                              ultimaConexao: new Date().toLocaleString('pt-BR'),
+                              batteryLevel: Math.floor(Math.random() * 40) + 60
+                            }
+                          }))}
+                          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
+                        >
+                          Simular Conexão
+                        </button>
+                        <button
+                          onClick={() => setConfiguracoes(prev => ({
+                            ...prev,
+                            whatsappWeb: { 
+                              ...prev.whatsappWeb, 
+                              qrCodeUrl: 'data:image/png;base64,new-qr-code',
+                              lastSeen: new Date().toLocaleString('pt-BR')
+                            }
+                          }))}
+                          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                        >
+                          Novo QR Code
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="text-center">
@@ -474,7 +517,9 @@ export function ConfiguracoesCobrancaView() {
                           ...prev,
                           whatsappWeb: { 
                             ...prev.whatsappWeb, 
-                            qrCodeUrl: 'data:image/png;base64,simulated-qr-code'
+                            qrCodeUrl: 'data:image/png;base64,simulated-qr-code',
+                            deviceName: 'WhatsApp Web - ConsultorPro',
+                            lastSeen: new Date().toLocaleString('pt-BR')
                           }
                         }))}
                         className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 mx-auto"
@@ -485,6 +530,21 @@ export function ConfiguracoesCobrancaView() {
                       <p className="text-xs text-gray-500 mt-2">
                         Gere um QR Code para conectar seu WhatsApp
                       </p>
+                      
+                      <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <div className="flex items-start space-x-2">
+                          <MessageSquare className="w-4 h-4 text-blue-600 mt-0.5" />
+                          <div className="text-sm">
+                            <p className="font-medium text-blue-900">Requisitos:</p>
+                            <ul className="text-blue-800 mt-1 space-y-1">
+                              <li>• WhatsApp instalado no celular</li>
+                              <li>• Conexão estável com internet</li>
+                              <li>• Permissão para usar WhatsApp Web</li>
+                              <li>• Número verificado no WhatsApp</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
