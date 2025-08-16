@@ -467,7 +467,7 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
 
               <button
                 onClick={entrarComoConvidado}
-                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 transition-all duration-200"
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Entrar na Reunião
               </button>

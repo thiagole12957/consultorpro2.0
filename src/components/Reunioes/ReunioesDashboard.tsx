@@ -91,7 +91,18 @@ export function ReunioesDashboard() {
     
     adicionarReuniao(novaReuniao);
     // Abrir reunião avançada em nova aba
-    window.open(novaReuniao.linkLocal, '_blank');
+    try {
+      // Salvar no localStorage para acesso público
+      const reunioesExistentes = JSON.parse(localStorage.getItem('reunioes') || '[]');
+      reunioesExistentes.push(novaReuniao);
+      localStorage.setItem('reunioes', JSON.stringify(reunioesExistentes));
+      
+      // Abrir reunião avançada em nova aba
+      window.open(novaReuniao.linkLocal, '_blank');
+    } catch (error) {
+      console.warn('Erro ao salvar/abrir reunião:', error);
+      alert('Reunião criada, mas houve erro ao abrir. Tente novamente.');
+    }
   };
 
 

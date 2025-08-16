@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { AlertTriangle } from 'lucide-react';
 import { ReuniaoPublica } from './ReuniaoPublica';
 
 export function ReuniaoRouter() {

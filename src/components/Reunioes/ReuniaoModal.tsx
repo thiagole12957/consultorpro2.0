@@ -148,9 +148,13 @@ export function ReuniaoModal({ reuniao, onClose }: ReuniaoModalProps) {
       adicionarReuniao(novaReuniao);
       
       // Salvar no localStorage para acesso público
-      const reunioesExistentes = JSON.parse(localStorage.getItem('reunioes') || '[]');
-      reunioesExistentes.push(novaReuniao);
-      localStorage.setItem('reunioes', JSON.stringify(reunioesExistentes));
+      try {
+        const reunioesExistentes = JSON.parse(localStorage.getItem('reunioes') || '[]');
+        reunioesExistentes.push(novaReuniao);
+        localStorage.setItem('reunioes', JSON.stringify(reunioesExistentes));
+      } catch (error) {
+        console.warn('Erro ao salvar reunião no localStorage:', error);
+      }
     }
     
     onClose();
