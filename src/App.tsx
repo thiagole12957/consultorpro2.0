@@ -37,6 +37,7 @@ import { RHDashboard } from './components/RH/RHDashboard';
 import { UsuariosList } from './components/Auth/UsuariosList';
 import { ConfiguracoesSistema } from './components/Configuracoes/ConfiguracoesSistema';
 import { ConfiguracaoAviso } from './components/Configuracoes/ConfiguracaoAviso';
+import { AgendaDashboard } from './components/Agenda/AgendaDashboard';
 import { useApp } from './contexts/AppContext';
 
 function AppContent() {
@@ -185,6 +186,8 @@ function AppContent() {
         return <ClientesList />;
       case 'consultoria-mensal':
         return <PainelConsultoriaDashboard />;
+      case 'agenda':
+        return <AgendaDashboard />;
       case 'contratos':
         return <ContratosDashboard />;
       case 'modelos-contrato':
