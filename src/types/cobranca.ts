@@ -47,6 +47,9 @@ export interface ConfiguracaoCanal {
   sessaoId?: string;
   qrCode?: string;
   conectado?: boolean;
+  deviceName?: string;
+  lastSeen?: string;
+  batteryLevel?: number;
 }
 
 export interface TemplateCobranca {

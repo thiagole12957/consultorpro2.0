@@ -27,6 +27,9 @@ export function ConfiguracoesCobrancaView() {
       sessaoAtiva: false,
       ultimaConexao: '',
       qrCodeUrl: '',
+      deviceName: '',
+      batteryLevel: 0,
+      lastSeen: '',
     },
     geral: {
       tentativasMaximas: 3,
@@ -52,8 +55,16 @@ export function ConfiguracoesCobrancaView() {
   };
 
   const conectarWhatsAppWeb = () => {
-    alert('Gerando QR Code para WhatsApp Web...');
-  };
+    setConfiguracoes(prev => ({
+      ...prev,
+      whatsappWeb: { 
+        ...prev.whatsappWeb, 
+        qrCodeUrl: 'data:image/png;base64,simulated-qr-code',
+        sessaoAtiva: false,
+        deviceName: 'WhatsApp Web - ConsultorPro',
+        lastSeen: new Date().toLocaleString('pt-BR')
+      }
+    }));
 
   return (
     <div className="space-y-6">
@@ -341,6 +352,17 @@ export function ConfiguracoesCobrancaView() {
               }`}>
                 Status: {configuracoes.whatsappOficial.verificado ? 'Verificado' : 'Não Verificado'}
               </p>
+              {!configuracoes.whatsappOficial.verificado && (
+                <button
+                  onClick={() => setConfiguracoes(prev => ({
+                    ...prev,
+                    whatsappOficial: { ...prev.whatsappOficial, verificado: true }
+                  }))}
+                  className="mt-2 bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors"
+                >
+                  Verificar Número
+                </button>
+              )}
             </div>
           </div>
           
@@ -348,40 +370,184 @@ export function ConfiguracoesCobrancaView() {
           <div className="space-y-4">
             <h5 className="font-medium text-gray-900">WhatsApp Web</h5>
             
-            <div className={`p-4 rounded-lg border-2 border-dashed ${
-              configuracoes.whatsappWeb.sessaoAtiva 
-                ? 'border-green-300 bg-green-50' 
-                : 'border-gray-300 bg-gray-50'
-            }`}>
-              <div className="text-center">
-                {configuracoes.whatsappWeb.sessaoAtiva ? (
+            <div className="bg-white border border-gray-300 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                    configuracoes.whatsappWeb.sessaoAtiva 
+                      ? 'bg-green-100 text-green-600' 
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    <MessageSquare className="w-5 h-5" />
+                  </div>
                   <div>
-                    <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <Phone className="w-6 h-6 text-white" />
-                    </div>
-                    <p className="font-medium text-green-900">Conectado</p>
-                    <p className="text-sm text-green-700">
-                      Última conexão: {configuracoes.whatsappWeb.ultimaConexao || 'Agora'}
+                    <h6 className="font-medium text-gray-900">WhatsApp Web</h6>
+                    <p className={`text-sm ${
+                      configuracoes.whatsappWeb.sessaoAtiva ? 'text-green-600' : 'text-gray-500'
+                    }`}>
+                      {configuracoes.whatsappWeb.sessaoAtiva ? 'Conectado' : 'Desconectado'}
                     </p>
                   </div>
-                ) : (
-                  <div>
-                    <div className="w-12 h-12 bg-gray-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <Phone className="w-6 h-6 text-white" />
+                </div>
+                
+                <div className={`w-3 h-3 rounded-full ${
+                  configuracoes.whatsappWeb.sessaoAtiva ? 'bg-green-500' : 'bg-gray-400'
+                }`}></div>
+              </div>
+              
+              {configuracoes.whatsappWeb.sessaoAtiva ? (
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Status:</span>
+                    <span className="text-green-600 font-medium">Ativo</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Última conexão:</span>
+                    <span className="text-gray-900">{configuracoes.whatsappWeb.ultimaConexao || 'Agora'}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Sessão:</span>
+                    <span className="text-green-600 font-medium">Válida</span>
+                  </div>
+                  {configuracoes.whatsappWeb.deviceName && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Dispositivo:</span>
+                      <span className="text-gray-900">{configuracoes.whatsappWeb.deviceName}</span>
                     </div>
-                    <p className="font-medium text-gray-900">Desconectado</p>
-                    <p className="text-sm text-gray-600 mb-3">
-                      Clique para gerar QR Code
-                    </p>
+                  )}
+                  {configuracoes.whatsappWeb.batteryLevel > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Bateria do celular:</span>
+                      <span className={`font-medium ${
+                        configuracoes.whatsappWeb.batteryLevel > 20 ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {configuracoes.whatsappWeb.batteryLevel}%
+                      </span>
+                    </div>
+                  )}
+                  
+                  <div className="pt-3 border-t border-gray-200">
                     <button
-                      onClick={conectarWhatsAppWeb}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                      onClick={() => setConfiguracoes(prev => ({
+                        ...prev,
+                        whatsappWeb: { 
+                          ...prev.whatsappWeb, 
+                          sessaoAtiva: false, 
+                          ultimaConexao: '', 
+                          qrCodeUrl: '',
+                          deviceName: '',
+                          batteryLevel: 0
+                        }
+                      }))}
+                      className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors text-sm"
                     >
-                      Conectar WhatsApp Web
+                      Desconectar
                     </button>
                   </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <div className="flex items-start space-x-2">
+                      <MessageSquare className="w-4 h-4 text-yellow-600 mt-0.5" />
+                      <div className="text-sm">
+                        <p className="font-medium text-yellow-900">Como conectar:</p>
+                        <ol className="text-yellow-800 mt-1 space-y-1 list-decimal list-inside">
+                          <li>Clique em "Gerar QR Code"</li>
+                          <li>Abra o WhatsApp no seu celular</li>
+                          <li>Vá em Menu → Dispositivos conectados</li>
+                          <li>Escaneie o QR Code</li>
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {configuracoes.whatsappWeb.qrCodeUrl ? (
+                    <div className="text-center">
+                      <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-6 mb-3">
+                        <div className="w-48 h-48 mx-auto bg-gray-100 rounded-lg flex items-center justify-center">
+                          <div className="text-center">
+                            <MessageSquare className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                            <p className="text-sm text-gray-600">QR Code apareceria aqui</p>
+                            <p className="text-xs text-gray-500 mt-1">Escaneie com WhatsApp</p>
+                            <div className="mt-3 text-xs text-gray-400">
+                              <p>Dispositivo: {configuracoes.whatsappWeb.deviceName}</p>
+                              <p>Gerado: {configuracoes.whatsappWeb.lastSeen}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">Escaneie o QR Code com seu WhatsApp</p>
+                      <div className="flex space-x-2 justify-center">
+                        <button
+                          onClick={() => setConfiguracoes(prev => ({
+                            ...prev,
+                            whatsappWeb: { 
+                              ...prev.whatsappWeb, 
+                              qrCodeUrl: '',
+                              sessaoAtiva: true,
+                              ultimaConexao: new Date().toLocaleString('pt-BR'),
+                              batteryLevel: Math.floor(Math.random() * 40) + 60
+                            }
+                          }))}
+                          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
+                        >
+                          Simular Conexão
+                        </button>
+                        <button
+                          onClick={() => setConfiguracoes(prev => ({
+                            ...prev,
+                            whatsappWeb: { 
+                              ...prev.whatsappWeb, 
+                              qrCodeUrl: 'data:image/png;base64,new-qr-code',
+                              lastSeen: new Date().toLocaleString('pt-BR')
+                            }
+                          }))}
+                          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                        >
+                          Novo QR Code
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <button
+                        onClick={() => setConfiguracoes(prev => ({
+                          ...prev,
+                          whatsappWeb: { 
+                            ...prev.whatsappWeb, 
+                            qrCodeUrl: 'data:image/png;base64,simulated-qr-code',
+                            deviceName: 'WhatsApp Web - ConsultorPro',
+                            lastSeen: new Date().toLocaleString('pt-BR')
+                          }
+                        }))}
+                        className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 mx-auto"
+                      >
+                        <MessageSquare className="w-5 h-5" />
+                        <span>Gerar QR Code</span>
+                      </button>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Gere um QR Code para conectar seu WhatsApp
+                      </p>
+                      
+                      <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <div className="flex items-start space-x-2">
+                          <MessageSquare className="w-4 h-4 text-blue-600 mt-0.5" />
+                          <div className="text-sm">
+                            <p className="font-medium text-blue-900">Requisitos:</p>
+                            <ul className="text-blue-800 mt-1 space-y-1">
+                              <li>• WhatsApp instalado no celular</li>
+                              <li>• Conexão estável com internet</li>
+                              <li>• Permissão para usar WhatsApp Web</li>
+                              <li>• Número verificado no WhatsApp</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -532,6 +698,22 @@ export function ConfiguracoesCobrancaView() {
                   Todas as credenciais são armazenadas com criptografia AES-256. 
                   Tokens e senhas nunca são expostos nos logs.
                 </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="flex items-start space-x-2">
+              <MessageSquare className="w-5 h-5 text-green-600 mt-0.5" />
+              <div className="text-sm">
+                <p className="font-medium text-green-900">WhatsApp Web - Boas Práticas</p>
+                <ul className="text-green-800 mt-1 space-y-1">
+                  <li>• Mantenha o celular conectado à internet</li>
+                  <li>• Não feche o WhatsApp no celular</li>
+                  <li>• Monitore a bateria do dispositivo</li>
+                  <li>• Reconecte se a sessão expirar</li>
+                  <li>• Use apenas em redes seguras</li>
+                </ul>
               </div>
             </div>
           </div>
