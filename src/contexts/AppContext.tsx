@@ -1321,6 +1321,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setReunioes(prev => prev.map(reuniao => 
       reuniao.id === id ? { ...reuniao, ...dados } : reuniao
     ));
+    
+    // Atualizar também no localStorage para acesso público
+    const reunioesExistentes = JSON.parse(localStorage.getItem('reunioes') || '[]');
+    const reunioesAtualizadas = reunioesExistentes.map((r: any) => 
+      r.id === id ? { ...r, ...dados } : r
+    );
+    localStorage.setItem('reunioes', JSON.stringify(reunioesAtualizadas));
   };
 
   // Funções de performance
