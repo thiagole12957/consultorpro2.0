@@ -38,6 +38,7 @@ import { UsuariosList } from './components/Auth/UsuariosList';
 import { ConfiguracoesSistema } from './components/Configuracoes/ConfiguracoesSistema';
 import { ConfiguracaoAviso } from './components/Configuracoes/ConfiguracaoAviso';
 import { AgendaDashboard } from './components/Agenda/AgendaDashboard';
+import { CalendarioEmpresa } from './components/Agenda/CalendarioEmpresa';
 import { useApp } from './contexts/AppContext';
 
 function AppContent() {
@@ -97,6 +98,11 @@ function AppContent() {
         return { 
           title: 'Agenda Pessoal', 
           subtitle: 'Organize seus compromissos e reuniões'
+        };
+      case 'calendario-empresa':
+        return { 
+          title: 'Calendário da Empresa', 
+          subtitle: 'Visão unificada de todos os eventos e reuniões'
         };
       case 'consultoria-mensal':
         return { 
@@ -188,6 +194,8 @@ function AppContent() {
         return <PainelConsultoriaDashboard />;
       case 'agenda':
         return <AgendaDashboard />;
+      case 'calendario-empresa':
+        return <CalendarioEmpresa />;
       case 'contratos':
         return <ContratosDashboard />;
       case 'modelos-contrato':

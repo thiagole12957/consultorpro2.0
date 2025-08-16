@@ -8,7 +8,7 @@ import { FerramentasColaborativas } from './FerramentasColaborativas';
 import { SalaReuniaoVirtual } from './SalaReuniaoVirtual';
 
 export function ReunioesDashboard() {
-  const { reunioes, clientes, contatos, adicionarReuniao } = useApp();
+  const { reunioes, clientes, contatos, adicionarReuniao, adicionarEventoAgenda, usuarioLogado } = useApp();
   const [showVideoConferencia, setShowVideoConferencia] = useState(false);
   const [showVideoAvancada, setShowVideoAvancada] = useState(false);
   const [reuniaoAtiva, setReuniaoAtiva] = useState<string | null>(null);
@@ -62,6 +62,35 @@ export function ReunioesDashboard() {
     };
     
     adicionarReuniao(novaReuniao);
+    
+    // Criar evento na agenda automaticamente
+    if (usuarioLogado) {
+      const eventoAgenda = {
+        id: `reuniao-${novaReuniao.id}`,
+        usuarioId: usuarioLogado.id,
+        titulo: `📹 ${novaReuniao.objetivo}`,
+        descricao: `Reunião rápida criada automaticamente`,
+        dataInicio: novaReuniao.dataHoraInicio,
+        dataFim: novaReuniao.dataHoraFim,
+        tipoEvento: 'reuniao' as const,
+        prioridade: 'alta' as const,
+        status: 'agendado' as const,
+        local: novaReuniao.linkLocal,
+        notificacoes: [{
+          id: '1',
+          tipo: 'popup' as const,
+          antecedenciaMinutos: 5,
+          ativa: true
+        }],
+        reuniaoId: novaReuniao.id,
+        cor: '#8B5CF6',
+        categoria: 'Reunião',
+        criadoEm: new Date().toISOString(),
+        atualizadoEm: new Date().toISOString(),
+      };
+      adicionarEventoAgenda(eventoAgenda);
+    }
+    
     // Abrir reunião em nova aba
     window.open(novaReuniao.linkLocal, '_blank');
   };
@@ -90,6 +119,43 @@ export function ReunioesDashboard() {
     };
     
     adicionarReuniao(novaReuniao);
+    
+    // Criar evento na agenda automaticamente
+    if (usuarioLogado) {
+      const eventoAgenda = {
+        id: `reuniao-${novaReuniao.id}`,
+        usuarioId: usuarioLogado.id,
+        titulo: `📹 ${novaReuniao.objetivo}`,
+        descricao: `Reunião avançada com IA, lousa digital e ferramentas colaborativas`,
+        dataInicio: novaReuniao.dataHoraInicio,
+        dataFim: novaReuniao.dataHoraFim,
+        tipoEvento: 'reuniao' as const,
+        prioridade: 'alta' as const,
+        status: 'agendado' as const,
+        local: novaReuniao.linkLocal,
+        notificacoes: [
+          {
+            id: '1',
+            tipo: 'popup' as const,
+            antecedenciaMinutos: 15,
+            ativa: true
+          },
+          {
+            id: '2',
+            tipo: 'email' as const,
+            antecedenciaMinutos: 60,
+            ativa: true
+          }
+        ],
+        reuniaoId: novaReuniao.id,
+        cor: '#8B5CF6',
+        categoria: 'Reunião',
+        criadoEm: new Date().toISOString(),
+        atualizadoEm: new Date().toISOString(),
+      };
+      adicionarEventoAgenda(eventoAgenda);
+    }
+    
     // Abrir reunião avançada em nova aba
     try {
       // Salvar no localStorage para acesso público

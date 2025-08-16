@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Save, Plus, Trash2, Users, Calendar, Clock, Video, MapPin } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 import { Reuniao, ParticipanteReuniao } from '../../types';
+import { EventoAgenda } from '../../types/agenda';
 
 interface ReuniaoModalProps {
   reuniao?: Reuniao | null;
@@ -9,7 +10,7 @@ interface ReuniaoModalProps {
 }
 
 export function ReuniaoModal({ reuniao, onClose }: ReuniaoModalProps) {
-  const { adicionarReuniao, atualizarReuniao, clientes, contatos } = useApp();
+  const { adicionarReuniao, atualizarReuniao, clientes, contatos, adicionarEventoAgenda, usuarioLogado } = useApp();
   const isEdit = !!reuniao;
   
   const [formData, setFormData] = useState({
@@ -105,6 +106,43 @@ export function ReuniaoModal({ reuniao, onClose }: ReuniaoModalProps) {
       ...prev,
       pauta: prev.pauta.map((item, i) => i === index ? valor : item)
     }));
+  const criarEventoAgenda = (reuniaoData: any) => {
+    if (!usuarioLogado) return;
+
+    const eventoAgenda: EventoAgenda = {
+      id: `reuniao-${reuniaoData.id}`,
+      usuarioId: usuarioLogado.id,
+      titulo: `📹 ${reuniaoData.objetivo}`,
+      descricao: `Reunião ${reuniaoData.canal === 'online' ? 'online' : 'presencial'}\nParticipantes: ${reuniaoData.participantes.length}\nResponsável: ${reuniaoData.responsavel}`,
+      dataInicio: reuniaoData.dataHoraInicio,
+      dataFim: reuniaoData.dataHoraFim,
+      tipoEvento: 'reuniao',
+      prioridade: 'alta',
+      status: 'agendado',
+      local: reuniaoData.canal === 'online' ? reuniaoData.linkLocal : reuniaoData.linkLocal,
+      notificacoes: [
+        {
+          id: '1',
+          tipo: 'popup',
+          antecedenciaMinutos: 15,
+          ativa: true
+        },
+        {
+          id: '2',
+          tipo: 'email',
+          antecedenciaMinutos: 60,
+          ativa: true
+        }
+      ],
+      reuniaoId: reuniaoData.id,
+      clienteId: reuniaoData.clienteId,
+      cor: '#8B5CF6',
+      categoria: 'Reunião',
+      criadoEm: new Date().toISOString(),
+      atualizadoEm: new Date().toISOString(),
+    };
+  };
+    adicionarEventoAgenda(eventoAgenda);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -146,6 +184,9 @@ export function ReuniaoModal({ reuniao, onClose }: ReuniaoModalProps) {
         ...dadosReuniao,
       };
       adicionarReuniao(novaReuniao);
+      
+      // Criar evento na agenda automaticamente
+      criarEventoAgenda(novaReuniao);
       
       // Salvar no localStorage para acesso público
       try {

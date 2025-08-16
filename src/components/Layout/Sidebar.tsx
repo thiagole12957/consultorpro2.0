@@ -41,6 +41,7 @@ export function Sidebar({ activeTab, setActiveTab, isOpen, onToggle }: SidebarPr
     { id: 'consultoria-mensal', label: 'Consultoria Mensal', icon: Brain },
     { id: 'contratos', label: 'Contratos', icon: FileText },
     { id: 'agenda', label: 'Agenda Pessoal', icon: Calendar },
+    { id: 'calendario-empresa', label: 'Calendário da Empresa', icon: Building2 },
     { id: 'vendas', label: 'Vendas', icon: ShoppingCart },
     { id: 'planos-venda', label: 'Planos de Venda', icon: Target },
     { id: 'produtos', label: 'Produtos & Serviços', icon: Package },

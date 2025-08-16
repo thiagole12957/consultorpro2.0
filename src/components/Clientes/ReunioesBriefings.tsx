@@ -8,7 +8,7 @@ interface ReunioesBriefingsProps {
 }
 
 export function ReunioesBriefings({ clienteId }: ReunioesBriefingsProps) {
-  const { reunioes, contatos, clientes, adicionarReuniao } = useApp();
+  const { reunioes, contatos, clientes, adicionarReuniao, adicionarEventoAgenda, usuarioLogado } = useApp();
   const [showReuniaoModal, setShowReuniaoModal] = useState(false);
 
   const clienteReunioes = reunioes.filter(r => r.clienteId === clienteId);
@@ -48,6 +48,36 @@ export function ReunioesBriefings({ clienteId }: ReunioesBriefingsProps) {
     };
     
     adicionarReuniao(novaReuniao);
+    
+    // Criar evento na agenda automaticamente
+    if (usuarioLogado) {
+      const eventoAgenda = {
+        id: `reuniao-${novaReuniao.id}`,
+        usuarioId: usuarioLogado.id,
+        titulo: `📹 ${novaReuniao.objetivo}`,
+        descricao: `Reunião rápida com cliente ${clientes.find(c => c.id === clienteId)?.empresa || ''}`,
+        dataInicio: novaReuniao.dataHoraInicio,
+        dataFim: novaReuniao.dataHoraFim,
+        tipoEvento: 'reuniao' as const,
+        prioridade: 'alta' as const,
+        status: 'agendado' as const,
+        local: novaReuniao.linkLocal,
+        notificacoes: [{
+          id: '1',
+          tipo: 'popup' as const,
+          antecedenciaMinutos: 5,
+          ativa: true
+        }],
+        reuniaoId: novaReuniao.id,
+        clienteId: clienteId,
+        cor: '#8B5CF6',
+        categoria: 'Reunião',
+        criadoEm: new Date().toISOString(),
+        atualizadoEm: new Date().toISOString(),
+      };
+      adicionarEventoAgenda(eventoAgenda);
+    }
+    
     // Abrir reunião em nova aba
     try {
       // Salvar no localStorage para acesso público
