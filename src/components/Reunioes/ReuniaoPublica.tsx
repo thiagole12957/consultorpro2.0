@@ -51,7 +51,7 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
         linkLocal: window.location.href,
         responsavel: 'João Silva - Consultor',
         empresa: 'HD Soluções ISP',
-        temSenha: Math.random() > 0.5, // 50% chance de ter senha
+        temSenha: false, // Por padrão sem senha - será verificado no banco
         senhaReuniao: '123456',
         participantesEsperados: 5,
         status: 'agendada',
@@ -62,6 +62,17 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
           transcricaoIA: true
         }
       };
+      
+      // Buscar reunião real do contexto se disponível
+      const reuniaoReal = JSON.parse(localStorage.getItem('reunioes') || '[]')
+        .find((r: any) => r.id === reuniaoId);
+      
+      if (reuniaoReal) {
+        reuniaoData.objetivo = reuniaoReal.objetivo;
+        reuniaoData.responsavel = reuniaoReal.responsavel;
+        reuniaoData.temSenha = reuniaoReal.configuracoes?.temSenha || false;
+        reuniaoData.senhaReuniao = reuniaoReal.configuracoes?.senhaReuniao || '';
+      }
       
       setReuniao(reuniaoData);
       
@@ -87,8 +98,9 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
   };
 
   const verificarSenha = () => {
-    if (senhaInformada === reuniao.senhaReuniao) {
+    if (senhaInformada.trim() === reuniao.senhaReuniao.trim()) {
       setEtapa('dados-convidado');
+      setErro(''); // Limpar erro anterior
     } else {
       setErro('Senha incorreta. Tente novamente.');
     }
@@ -99,6 +111,8 @@ export function ReuniaoPublica({ reuniaoId }: ReuniaoPublicaProps) {
       setErro('Preencha todos os campos obrigatórios');
       return;
     }
+    
+    setErro(''); // Limpar erro anterior
     
     // Salvar dados do convidado
     localStorage.setItem('convidado_reuniao', JSON.stringify({

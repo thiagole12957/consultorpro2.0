@@ -146,6 +146,11 @@ export function ReuniaoModal({ reuniao, onClose }: ReuniaoModalProps) {
         ...dadosReuniao,
       };
       adicionarReuniao(novaReuniao);
+      
+      // Salvar no localStorage para acesso público
+      const reunioesExistentes = JSON.parse(localStorage.getItem('reunioes') || '[]');
+      reunioesExistentes.push(novaReuniao);
+      localStorage.setItem('reunioes', JSON.stringify(reunioesExistentes));
     }
     
     onClose();

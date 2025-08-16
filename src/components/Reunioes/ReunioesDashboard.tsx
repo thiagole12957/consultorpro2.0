@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
-import { Plus, Video, Calendar, Users, Clock, Brain, FileText, Play, Search, Filter, Target, X, Lock, UserPlus, Copy } from 'lucide-react';
+import { Plus, Video, Calendar, Users, Clock, Brain, FileText, Play, Search, Filter, Target, X, Lock, UserPlus, Copy, Edit2 } from 'lucide-react';
 import { VideoConferencia } from './VideoConferencia';
 import { VideoConferenciaAvancada } from './VideoConferenciaAvancada';
 import { ReuniaoModal } from './ReuniaoModal';
@@ -17,6 +17,7 @@ export function ReunioesDashboard() {
   const [showSalaVirtual, setShowSalaVirtual] = useState(false);
   const [filtroStatus, setFiltroStatus] = useState('todas');
   const [busca, setBusca] = useState('');
+  const [reuniaoEdit, setReuniaoEdit] = useState(null);
 
   const iniciarVideoConferencia = (reuniaoId: string) => {
     setReuniaoAtiva(reuniaoId);
@@ -106,6 +107,11 @@ export function ReunioesDashboard() {
       case 'cancelada': return 'bg-red-100 text-red-700';
       default: return 'bg-gray-100 text-gray-700';
     }
+  };
+
+  const handleEditReuniao = (reuniao: any) => {
+    setReuniaoEdit(reuniao);
+    setShowReuniaoModal(true);
   };
 
   const reunioesFiltradas = reunioes.filter(reuniao => {
@@ -396,6 +402,14 @@ export function ReunioesDashboard() {
                           <span>Ver Resumo IA</span>
                         </button>
                       )}
+                      
+                      <button
+                        onClick={() => handleEditReuniao(reuniao)}
+                        className="bg-gray-600 text-white px-3 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-700 transition-colors"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                        <span>Editar</span>
+                      </button>
                     </div>
                   </div>
 
@@ -474,7 +488,13 @@ export function ReunioesDashboard() {
 
       {/* Modal Nova Reunião */}
       {showReuniaoModal && (
-        <ReuniaoModal onClose={() => setShowReuniaoModal(false)} />
+        <ReuniaoModal 
+          reuniao={reuniaoEdit}
+          onClose={() => {
+            setShowReuniaoModal(false);
+            setReuniaoEdit(null);
+          }} 
+        />
       )}
 
       {/* Modal Ferramentas Colaborativas */}
