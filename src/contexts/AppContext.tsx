@@ -363,8 +363,1020 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Estados de agenda
   const [eventosAgenda, setEventosAgenda] = useState<EventoAgenda[]>([]);
 
-  // Estados básicos (vazios por enquanto)
-  const [contasContabeis] = useState<any[]>([]);
+  // Estados de contabilidade
+  const [contasContabeis, setContasContabeis] = useState<ContaContabil[]>([
+    // ATIVO
+    {
+      id: '1',
+      codigo: '1',
+      nome: 'ATIVO',
+      tipo: 'Ativo',
+      subtipo: 'Grupo',
+      contaPai: '',
+      natureza: 'Devedora',
+      nivel: 1,
+      ativa: true
+    },
+    {
+      id: '2',
+      codigo: '1.1',
+      nome: 'ATIVO CIRCULANTE',
+      tipo: 'Ativo',
+      subtipo: 'Subgrupo',
+      contaPai: '1',
+      natureza: 'Devedora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '3',
+      codigo: '1.1.1',
+      nome: 'Caixa e Equivalentes de Caixa',
+      tipo: 'Ativo',
+      subtipo: 'Subgrupo',
+      contaPai: '2',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '4',
+      codigo: '1.1.1.01',
+      nome: 'Caixa',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '3',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '5',
+      codigo: '1.1.1.02',
+      nome: 'Bancos Conta Movimento',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '3',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '6',
+      codigo: '1.1.1.03',
+      nome: 'Aplicações Financeiras',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '3',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '7',
+      codigo: '1.1.2',
+      nome: 'Contas a Receber',
+      tipo: 'Ativo',
+      subtipo: 'Subgrupo',
+      contaPai: '2',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '8',
+      codigo: '1.1.2.01',
+      nome: 'Clientes',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '7',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '9',
+      codigo: '1.1.2.02',
+      nome: 'Duplicatas a Receber',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '7',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '10',
+      codigo: '1.1.3',
+      nome: 'Estoques',
+      tipo: 'Ativo',
+      subtipo: 'Subgrupo',
+      contaPai: '2',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '11',
+      codigo: '1.1.3.01',
+      nome: 'Estoque de Mercadorias',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '10',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '12',
+      codigo: '1.1.4',
+      nome: 'Impostos a Recuperar',
+      tipo: 'Ativo',
+      subtipo: 'Subgrupo',
+      contaPai: '2',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '13',
+      codigo: '1.1.4.01',
+      nome: 'ICMS a Recuperar',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '12',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '14',
+      codigo: '1.1.4.02',
+      nome: 'PIS a Recuperar',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '12',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '15',
+      codigo: '1.1.4.03',
+      nome: 'COFINS a Recuperar',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '12',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '16',
+      codigo: '1.2',
+      nome: 'ATIVO NÃO CIRCULANTE',
+      tipo: 'Ativo',
+      subtipo: 'Subgrupo',
+      contaPai: '1',
+      natureza: 'Devedora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '17',
+      codigo: '1.2.1',
+      nome: 'Realizável a Longo Prazo',
+      tipo: 'Ativo',
+      subtipo: 'Subgrupo',
+      contaPai: '16',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '18',
+      codigo: '1.2.1.01',
+      nome: 'Contas a Receber LP',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '17',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '19',
+      codigo: '1.2.2',
+      nome: 'Imobilizado',
+      tipo: 'Ativo',
+      subtipo: 'Subgrupo',
+      contaPai: '16',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '20',
+      codigo: '1.2.2.01',
+      nome: 'Móveis e Utensílios',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '19',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '21',
+      codigo: '1.2.2.02',
+      nome: 'Equipamentos de Informática',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '19',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '22',
+      codigo: '1.2.2.03',
+      nome: 'Veículos',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '19',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '23',
+      codigo: '1.2.2.04',
+      nome: '(-) Depreciação Acumulada',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '19',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '24',
+      codigo: '1.2.3',
+      nome: 'Intangível',
+      tipo: 'Ativo',
+      subtipo: 'Subgrupo',
+      contaPai: '16',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '25',
+      codigo: '1.2.3.01',
+      nome: 'Software e Licenças',
+      tipo: 'Ativo',
+      subtipo: 'Conta',
+      contaPai: '24',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    
+    // PASSIVO
+    {
+      id: '26',
+      codigo: '2',
+      nome: 'PASSIVO',
+      tipo: 'Passivo',
+      subtipo: 'Grupo',
+      contaPai: '',
+      natureza: 'Credora',
+      nivel: 1,
+      ativa: true
+    },
+    {
+      id: '27',
+      codigo: '2.1',
+      nome: 'PASSIVO CIRCULANTE',
+      tipo: 'Passivo',
+      subtipo: 'Subgrupo',
+      contaPai: '26',
+      natureza: 'Credora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '28',
+      codigo: '2.1.1',
+      nome: 'Fornecedores',
+      tipo: 'Passivo',
+      subtipo: 'Subgrupo',
+      contaPai: '27',
+      natureza: 'Credora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '29',
+      codigo: '2.1.1.01',
+      nome: 'Fornecedores Nacionais',
+      tipo: 'Passivo',
+      subtipo: 'Conta',
+      contaPai: '28',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '30',
+      codigo: '2.1.2',
+      nome: 'Obrigações Trabalhistas',
+      tipo: 'Passivo',
+      subtipo: 'Subgrupo',
+      contaPai: '27',
+      natureza: 'Credora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '31',
+      codigo: '2.1.2.01',
+      nome: 'Salários a Pagar',
+      tipo: 'Passivo',
+      subtipo: 'Conta',
+      contaPai: '30',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '32',
+      codigo: '2.1.2.02',
+      nome: 'INSS a Recolher',
+      tipo: 'Passivo',
+      subtipo: 'Conta',
+      contaPai: '30',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '33',
+      codigo: '2.1.2.03',
+      nome: 'FGTS a Recolher',
+      tipo: 'Passivo',
+      subtipo: 'Conta',
+      contaPai: '30',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '34',
+      codigo: '2.1.3',
+      nome: 'Obrigações Fiscais',
+      tipo: 'Passivo',
+      subtipo: 'Subgrupo',
+      contaPai: '27',
+      natureza: 'Credora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '35',
+      codigo: '2.1.3.01',
+      nome: 'ICMS a Recolher',
+      tipo: 'Passivo',
+      subtipo: 'Conta',
+      contaPai: '34',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '36',
+      codigo: '2.1.3.02',
+      nome: 'PIS a Recolher',
+      tipo: 'Passivo',
+      subtipo: 'Conta',
+      contaPai: '34',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '37',
+      codigo: '2.1.3.03',
+      nome: 'COFINS a Recolher',
+      tipo: 'Passivo',
+      subtipo: 'Conta',
+      contaPai: '34',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '38',
+      codigo: '2.1.3.04',
+      nome: 'Imposto de Renda a Recolher',
+      tipo: 'Passivo',
+      subtipo: 'Conta',
+      contaPai: '34',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '39',
+      codigo: '2.1.3.05',
+      nome: 'CSLL a Recolher',
+      tipo: 'Passivo',
+      subtipo: 'Conta',
+      contaPai: '34',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '40',
+      codigo: '2.1.4',
+      nome: 'Empréstimos e Financiamentos',
+      tipo: 'Passivo',
+      subtipo: 'Subgrupo',
+      contaPai: '27',
+      natureza: 'Credora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '41',
+      codigo: '2.1.4.01',
+      nome: 'Empréstimos Bancários CP',
+      tipo: 'Passivo',
+      subtipo: 'Conta',
+      contaPai: '40',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '42',
+      codigo: '2.2',
+      nome: 'PASSIVO NÃO CIRCULANTE',
+      tipo: 'Passivo',
+      subtipo: 'Subgrupo',
+      contaPai: '26',
+      natureza: 'Credora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '43',
+      codigo: '2.2.1',
+      nome: 'Empréstimos e Financiamentos LP',
+      tipo: 'Passivo',
+      subtipo: 'Subgrupo',
+      contaPai: '42',
+      natureza: 'Credora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '44',
+      codigo: '2.2.1.01',
+      nome: 'Empréstimos Bancários LP',
+      tipo: 'Passivo',
+      subtipo: 'Conta',
+      contaPai: '43',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    
+    // PATRIMÔNIO LÍQUIDO
+    {
+      id: '45',
+      codigo: '3',
+      nome: 'PATRIMÔNIO LÍQUIDO',
+      tipo: 'Patrimonio',
+      subtipo: 'Grupo',
+      contaPai: '',
+      natureza: 'Credora',
+      nivel: 1,
+      ativa: true
+    },
+    {
+      id: '46',
+      codigo: '3.1',
+      nome: 'Capital Social',
+      tipo: 'Patrimonio',
+      subtipo: 'Subgrupo',
+      contaPai: '45',
+      natureza: 'Credora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '47',
+      codigo: '3.1.1',
+      nome: 'Capital Social Subscrito',
+      tipo: 'Patrimonio',
+      subtipo: 'Conta',
+      contaPai: '46',
+      natureza: 'Credora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '48',
+      codigo: '3.2',
+      nome: 'Reservas',
+      tipo: 'Patrimonio',
+      subtipo: 'Subgrupo',
+      contaPai: '45',
+      natureza: 'Credora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '49',
+      codigo: '3.2.1',
+      nome: 'Reservas de Lucros',
+      tipo: 'Patrimonio',
+      subtipo: 'Conta',
+      contaPai: '48',
+      natureza: 'Credora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '50',
+      codigo: '3.3',
+      nome: 'Lucros ou Prejuízos Acumulados',
+      tipo: 'Patrimonio',
+      subtipo: 'Conta',
+      contaPai: '45',
+      natureza: 'Credora',
+      nivel: 2,
+      ativa: true
+    },
+    
+    // RECEITAS
+    {
+      id: '51',
+      codigo: '4',
+      nome: 'RECEITAS',
+      tipo: 'Receita',
+      subtipo: 'Grupo',
+      contaPai: '',
+      natureza: 'Credora',
+      nivel: 1,
+      ativa: true
+    },
+    {
+      id: '52',
+      codigo: '4.1',
+      nome: 'Receita Bruta',
+      tipo: 'Receita',
+      subtipo: 'Subgrupo',
+      contaPai: '51',
+      natureza: 'Credora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '53',
+      codigo: '4.1.1',
+      nome: 'Receita de Vendas',
+      tipo: 'Receita',
+      subtipo: 'Subgrupo',
+      contaPai: '52',
+      natureza: 'Credora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '54',
+      codigo: '4.1.1.01',
+      nome: 'Vendas de Produtos',
+      tipo: 'Receita',
+      subtipo: 'Conta',
+      contaPai: '53',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '55',
+      codigo: '4.1.1.02',
+      nome: 'Receita de Serviços',
+      tipo: 'Receita',
+      subtipo: 'Conta',
+      contaPai: '53',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '56',
+      codigo: '4.1.1.03',
+      nome: 'Receita de Consultoria',
+      tipo: 'Receita',
+      subtipo: 'Conta',
+      contaPai: '53',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '57',
+      codigo: '4.1.1.04',
+      nome: 'Receita de Software',
+      tipo: 'Receita',
+      subtipo: 'Conta',
+      contaPai: '53',
+      natureza: 'Credora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '58',
+      codigo: '4.2',
+      nome: 'Deduções da Receita Bruta',
+      tipo: 'Receita',
+      subtipo: 'Subgrupo',
+      contaPai: '51',
+      natureza: 'Devedora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '59',
+      codigo: '4.2.1',
+      nome: 'Impostos sobre Vendas',
+      tipo: 'Receita',
+      subtipo: 'Subgrupo',
+      contaPai: '58',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '60',
+      codigo: '4.2.1.01',
+      nome: 'ICMS sobre Vendas',
+      tipo: 'Receita',
+      subtipo: 'Conta',
+      contaPai: '59',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '61',
+      codigo: '4.2.1.02',
+      nome: 'PIS sobre Vendas',
+      tipo: 'Receita',
+      subtipo: 'Conta',
+      contaPai: '59',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '62',
+      codigo: '4.2.1.03',
+      nome: 'COFINS sobre Vendas',
+      tipo: 'Receita',
+      subtipo: 'Conta',
+      contaPai: '59',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '63',
+      codigo: '4.2.2',
+      nome: 'Devoluções e Cancelamentos',
+      tipo: 'Receita',
+      subtipo: 'Conta',
+      contaPai: '58',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '64',
+      codigo: '4.3',
+      nome: 'Outras Receitas',
+      tipo: 'Receita',
+      subtipo: 'Subgrupo',
+      contaPai: '51',
+      natureza: 'Credora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '65',
+      codigo: '4.3.1',
+      nome: 'Receitas Financeiras',
+      tipo: 'Receita',
+      subtipo: 'Conta',
+      contaPai: '64',
+      natureza: 'Credora',
+      nivel: 3,
+      ativa: true
+    },
+    
+    // DESPESAS
+    {
+      id: '66',
+      codigo: '5',
+      nome: 'DESPESAS',
+      tipo: 'Despesa',
+      subtipo: 'Grupo',
+      contaPai: '',
+      natureza: 'Devedora',
+      nivel: 1,
+      ativa: true
+    },
+    {
+      id: '67',
+      codigo: '5.1',
+      nome: 'Custo dos Produtos Vendidos',
+      tipo: 'Despesa',
+      subtipo: 'Subgrupo',
+      contaPai: '66',
+      natureza: 'Devedora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '68',
+      codigo: '5.1.1',
+      nome: 'Custo de Mercadorias',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '67',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '69',
+      codigo: '5.1.2',
+      nome: 'Custo de Serviços',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '67',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '70',
+      codigo: '5.2',
+      nome: 'Despesas Operacionais',
+      tipo: 'Despesa',
+      subtipo: 'Subgrupo',
+      contaPai: '66',
+      natureza: 'Devedora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '71',
+      codigo: '5.2.1',
+      nome: 'Despesas Administrativas',
+      tipo: 'Despesa',
+      subtipo: 'Subgrupo',
+      contaPai: '70',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '72',
+      codigo: '5.2.1.01',
+      nome: 'Salários e Ordenados',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '71',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '73',
+      codigo: '5.2.1.02',
+      nome: 'Encargos Sociais',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '71',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '74',
+      codigo: '5.2.1.03',
+      nome: 'Pró-Labore',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '71',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '75',
+      codigo: '5.2.1.04',
+      nome: 'Honorários Profissionais',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '71',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '76',
+      codigo: '5.2.1.05',
+      nome: 'Aluguéis',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '71',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '77',
+      codigo: '5.2.1.06',
+      nome: 'Energia Elétrica',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '71',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '78',
+      codigo: '5.2.1.07',
+      nome: 'Telefone e Internet',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '71',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '79',
+      codigo: '5.2.1.08',
+      nome: 'Material de Escritório',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '71',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '80',
+      codigo: '5.2.1.09',
+      nome: 'Licenças de Software',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '71',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '81',
+      codigo: '5.2.1.10',
+      nome: 'Depreciação',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '71',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '82',
+      codigo: '5.2.2',
+      nome: 'Despesas Comerciais',
+      tipo: 'Despesa',
+      subtipo: 'Subgrupo',
+      contaPai: '70',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '83',
+      codigo: '5.2.2.01',
+      nome: 'Comissões sobre Vendas',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '82',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '84',
+      codigo: '5.2.2.02',
+      nome: 'Marketing e Publicidade',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '82',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '85',
+      codigo: '5.2.2.03',
+      nome: 'Viagens e Representação',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '82',
+      natureza: 'Devedora',
+      nivel: 4,
+      ativa: true
+    },
+    {
+      id: '86',
+      codigo: '5.3',
+      nome: 'Despesas Financeiras',
+      tipo: 'Despesa',
+      subtipo: 'Subgrupo',
+      contaPai: '66',
+      natureza: 'Devedora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '87',
+      codigo: '5.3.1',
+      nome: 'Juros Passivos',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '86',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '88',
+      codigo: '5.3.2',
+      nome: 'Tarifas Bancárias',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '86',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '89',
+      codigo: '5.4',
+      nome: 'Despesas Tributárias',
+      tipo: 'Despesa',
+      subtipo: 'Subgrupo',
+      contaPai: '66',
+      natureza: 'Devedora',
+      nivel: 2,
+      ativa: true
+    },
+    {
+      id: '90',
+      codigo: '5.4.1',
+      nome: 'Imposto de Renda',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '89',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    },
+    {
+      id: '91',
+      codigo: '5.4.2',
+      nome: 'Contribuição Social',
+      tipo: 'Despesa',
+      subtipo: 'Conta',
+      contaPai: '89',
+      natureza: 'Devedora',
+      nivel: 3,
+      ativa: true
+    }
+  ]);
+
   const [lancamentosContabeis] = useState<any[]>([]);
   const [fornecedores] = useState<any[]>([]);
   const [contasPagar] = useState<any[]>([]);
