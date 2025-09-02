@@ -1,536 +1,716 @@
-import React, { useState } from 'react';
-import { 
-  Palette, Type, Square, Circle, ArrowRight, Eraser, Save, Download,
-  Upload, Share2, Users, MessageSquare, FileText, Image, Video,
-  Mic, Camera, Monitor, Grid3X3, Layers, Zap, Brain, Target,
-  Clock, Calendar, Star, Bookmark, Tag, Hash, Eye, Lock,
-  RefreshCw, RotateCcw, Move, Copy, Trash2, Edit2, Plus
-} from 'lucide-react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { Cliente, Contrato, Fatura, Licenca, PlanoVenda, Produto, Reuniao, ContatoCliente } from '../types';
+import { Empresa, Filial } from '../types/empresa';
+import { Usuario, PerfilUsuario } from '../types/auth';
+import { Colaborador, Departamento, Setor } from '../types/rh';
+import { EventoAgenda } from '../types/agenda';
 
-interface FerramentasColaborativasProps {
-  reuniaoId: string;
-  isHost: boolean;
+interface AppContextType {
+  // Estados principais
+  clientes: Cliente[];
+  contratos: Contrato[];
+  faturas: Fatura[];
+  licencas: Licenca[];
+  planosVenda: PlanoVenda[];
+  produtos: Produto[];
+  reunioes: Reuniao[];
+  contatos: ContatoCliente[];
+  
+  // Estados de empresa
+  empresas: Empresa[];
+  filiais: Filial[];
+  empresaSelecionada: Empresa | null;
+  filialAtiva: Filial | null;
+  
+  // Estados de usuário
+  usuarios: Usuario[];
+  perfisUsuario: PerfilUsuario[];
+  usuarioLogado: Usuario | null;
+  
+  // Estados de RH
+  colaboradores: Colaborador[];
+  departamentos: Departamento[];
+  setores: Setor[];
+  
+  // Estados de agenda
+  eventosAgenda: EventoAgenda[];
+  
+  // Estados básicos de contabilidade
+  contasContabeis: any[];
+  lancamentosContabeis: any[];
+  fornecedores: any[];
+  contasPagar: any[];
+  contasBancarias: any[];
+  pagamentosConta: any[];
+  
+  // Estados de consultoria (vazios por enquanto)
+  performanceMensal: any[];
+  metasMensais: any[];
+  diagnosticosMensais: any[];
+  acoesConsultoria: any[];
+  processosCliente: any[];
+  briefingsReuniao: any[];
+  oportunidadesNegocio: any[];
+  eventosLinhaTempo: any[];
+  relatoriosMensais: any[];
+  consultoriasMensais: any[];
+  
+  // Estados de cobrança (vazios por enquanto)
+  carteirasCobranca: any[];
+  modelosContrato: any[];
+  regrasCobranca: any[];
+  historicoCobranca: any[];
+  logsCobranca: any[];
+  
+  // Estados de vendas (vazios por enquanto)
+  vendas: any[];
+  condicoesPagamento: any[];
+  
+  // Seleções
+  clienteSelecionado: Cliente | null;
+  
+  // Funções básicas
+  adicionarCliente: (cliente: Cliente) => void;
+  atualizarCliente: (id: string, dados: Partial<Cliente>) => void;
+  setClienteSelecionado: (cliente: Cliente | null) => void;
+  adicionarContrato: (contrato: Contrato) => void;
+  atualizarContrato: (id: string, dados: Partial<Contrato>) => void;
+  adicionarFatura: (fatura: Fatura) => void;
+  atualizarFatura: (id: string, dados: Partial<Fatura>) => void;
+  adicionarLicenca: (licenca: Licenca) => void;
+  atualizarLicenca: (id: string, dados: Partial<Licenca>) => void;
+  adicionarPlanoVenda: (plano: PlanoVenda) => void;
+  atualizarPlanoVenda: (id: string, dados: Partial<PlanoVenda>) => void;
+  adicionarProduto: (produto: Produto) => void;
+  atualizarProduto: (id: string, dados: Partial<Produto>) => void;
+  adicionarReuniao: (reuniao: Reuniao) => void;
+  atualizarReuniao: (id: string, dados: Partial<Reuniao>) => void;
+  adicionarContato: (contato: ContatoCliente) => void;
+  atualizarContato: (id: string, dados: Partial<ContatoCliente>) => void;
+  excluirContato: (id: string) => void;
+  
+  // Funções de empresa
+  adicionarEmpresa: (empresa: Empresa) => void;
+  atualizarEmpresa: (id: string, dados: Partial<Empresa>) => void;
+  setEmpresaSelecionada: (empresa: Empresa | null) => void;
+  adicionarFilial: (filial: Filial) => void;
+  atualizarFilial: (id: string, dados: Partial<Filial>) => void;
+  
+  // Funções de usuário
+  adicionarUsuario: (usuario: Usuario) => void;
+  atualizarUsuario: (id: string, dados: Partial<Usuario>) => void;
+  login: (email: string, senha: string) => boolean;
+  logout: () => void;
+  
+  // Funções de RH
+  adicionarColaborador: (colaborador: Colaborador) => void;
+  atualizarColaborador: (id: string, dados: Partial<Colaborador>) => void;
+  adicionarDepartamento: (departamento: Departamento) => void;
+  atualizarDepartamento: (id: string, dados: Partial<Departamento>) => void;
+  adicionarSetor: (setor: Setor) => void;
+  atualizarSetor: (id: string, dados: Partial<Setor>) => void;
+  
+  // Funções de agenda
+  adicionarEventoAgenda: (evento: EventoAgenda) => void;
+  atualizarEventoAgenda: (id: string, dados: Partial<EventoAgenda>) => void;
+  
+  // Funções básicas de contabilidade (stubs)
+  adicionarContaContabil: (conta: any) => void;
+  atualizarContaContabil: (id: string, dados: any) => void;
+  excluirContaContabil: (id: string) => void;
+  adicionarLancamentoContabil: (lancamento: any) => void;
+  adicionarFornecedor: (fornecedor: any) => void;
+  atualizarFornecedor: (id: string, dados: any) => void;
+  adicionarContaPagar: (conta: any) => void;
+  atualizarContaPagar: (id: string, dados: any) => void;
+  adicionarContaBancaria: (conta: any) => void;
+  atualizarContaBancaria: (id: string, dados: any) => void;
+  realizarPagamento: (contaId: string, dados: any) => void;
+  gerarLancamentoPagamento: (conta: any) => void;
+  gerarRecorrencia: (contaId: string) => void;
+  
+  // Funções de consultoria (stubs)
+  adicionarPerformanceMensal: (performance: any) => void;
+  atualizarPerformanceMensal: (id: string, dados: any) => void;
+  adicionarMetaMensal: (meta: any) => void;
+  atualizarMetaMensal: (id: string, dados: any) => void;
+  excluirMetaMensal: (id: string) => void;
+  adicionarDiagnosticoMensal: (diagnostico: any) => void;
+  atualizarDiagnosticoMensal: (id: string, dados: any) => void;
+  adicionarAcaoConsultoria: (acao: any) => void;
+  atualizarAcaoConsultoria: (id: string, dados: any) => void;
+  excluirAcaoConsultoria: (id: string) => void;
+  adicionarProcessoCliente: (processo: any) => void;
+  atualizarProcessoCliente: (id: string, dados: any) => void;
+  adicionarBriefingReuniao: (briefing: any) => void;
+  atualizarBriefingReuniao: (id: string, dados: any) => void;
+  adicionarOportunidadeNegocio: (oportunidade: any) => void;
+  atualizarOportunidadeNegocio: (id: string, dados: any) => void;
+  excluirOportunidadeNegocio: (id: string) => void;
+  adicionarEventoLinhaTempo: (evento: any) => void;
+  adicionarRelatorioMensal: (relatorio: any) => void;
+  
+  // Funções de cobrança (stubs)
+  adicionarCarteiraCobranca: (carteira: any) => void;
+  atualizarCarteiraCobranca: (id: string, dados: any) => void;
+  adicionarModeloContrato: (modelo: any) => void;
+  atualizarModeloContrato: (id: string, dados: any) => void;
+  adicionarRegraCobranca: (regra: any) => void;
+  atualizarRegraCobranca: (id: string, dados: any) => void;
 }
 
-export function FerramentasColaborativas({ reuniaoId, isHost }: FerramentasColaborativasProps) {
-  const [activeTab, setActiveTab] = useState<'whiteboard' | 'documents' | 'polls' | 'breakout' | 'ai-tools'>('whiteboard');
-  
-  // Estados da Lousa Digital
-  const [whiteboardMode, setWhiteboardMode] = useState<'draw' | 'present' | 'collaborate'>('draw');
-  const [selectedTemplate, setSelectedTemplate] = useState('blank');
-  const [whiteboardLayers, setWhiteboardLayers] = useState([
-    { id: '1', name: 'Camada Principal', visible: true, locked: false },
-    { id: '2', name: 'Anotações', visible: true, locked: false }
-  ]);
-  
-  // Estados de Documentos
-  const [documentosCompartilhados, setDocumentosCompartilhados] = useState([
-    { id: '1', nome: 'Apresentação.pptx', tipo: 'presentation', tamanho: '2.5 MB', autor: 'João Silva' },
-    { id: '2', nome: 'Relatório.pdf', tipo: 'document', tamanho: '1.8 MB', autor: 'Maria Santos' }
-  ]);
-  
-  // Estados de Enquetes
-  const [enquetes, setEnquetes] = useState([
+const AppContext = createContext<AppContextType | undefined>(undefined);
+
+export function AppProvider({ children }: { children: ReactNode }) {
+  // Estados principais
+  const [clientes, setClientes] = useState<Cliente[]>([
     {
       id: '1',
-      pergunta: 'Qual a prioridade para o próximo trimestre?',
-      opcoes: ['Crescimento', 'Eficiência', 'Inovação', 'Qualidade'],
-      votos: [3, 2, 5, 1],
-      ativa: true
+      empresaId: '1',
+      filialId: '1',
+      nome: 'João Silva',
+      empresa: 'TechCorp Ltda',
+      email: 'joao@techcorp.com',
+      telefone: '(11) 99999-9999',
+      segmento: 'Tecnologia',
+      tamanho: 'Médio',
+      status: 'Ativo',
+      dataConversao: '2024-01-15',
+      valorTotal: 120000
     }
   ]);
-  
-  // Estados de Salas Simultâneas
-  const [salasSimultaneas, setSalasSimultaneas] = useState([
-    { id: '1', nome: 'Equipe Técnica', participantes: 4, ativa: true },
-    { id: '2', nome: 'Equipe Comercial', participantes: 3, ativa: true }
+
+  const [contratos, setContratos] = useState<Contrato[]>([
+    {
+      id: '1',
+      empresaId: '1',
+      filialId: '1',
+      clienteId: '1',
+      nome: 'Contrato de Consultoria TechCorp',
+      planoVendaId: '1',
+      modeloContratoId: '1',
+      carteiraCobrancaId: '1',
+      diaVencimento: 10,
+      valor: 120000,
+      dataInicio: '2024-01-01',
+      dataFim: '2024-12-31',
+      status: 'Ativo',
+      dataAtivacao: '2024-01-01',
+      tipo: 'Consultoria',
+      renovacaoAutomatica: true,
+      observacoes: 'Contrato de consultoria mensal'
+    }
   ]);
 
-  const templates = [
-    { id: 'blank', nome: 'Em Branco', preview: '⬜' },
-    { id: 'grid', nome: 'Grade', preview: '⊞' },
-    { id: 'kanban', nome: 'Kanban', preview: '📋' },
-    { id: 'flowchart', nome: 'Fluxograma', preview: '🔄' },
-    { id: 'mindmap', nome: 'Mapa Mental', preview: '🧠' },
-    { id: 'timeline', nome: 'Linha do Tempo', preview: '📅' }
-  ];
+  const [faturas, setFaturas] = useState<Fatura[]>([
+    {
+      id: '1',
+      empresaId: '1',
+      filialId: '1',
+      clienteId: '1',
+      contratoId: '1',
+      numero: 'FAT-2024-001',
+      valor: 10000,
+      dataVencimento: '2024-02-10',
+      dataPagamento: '2024-02-08',
+      status: 'Pago',
+      descricao: 'Consultoria Janeiro 2024',
+      parcela: 1,
+      totalParcelas: 12
+    }
+  ]);
 
-  const renderWhiteboard = () => (
-    <div className="space-y-4">
-      {/* Toolbar da Lousa */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <h4 className="font-semibold text-gray-900">Lousa Digital Colaborativa</h4>
-            <div className="flex space-x-1">
-              <button
-                onClick={() => setWhiteboardMode('draw')}
-                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                  whiteboardMode === 'draw' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
-                }`}
-              >
-                Desenhar
-              </button>
-              <button
-                onClick={() => setWhiteboardMode('present')}
-                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                  whiteboardMode === 'present' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
-                }`}
-              >
-                Apresentar
-              </button>
-              <button
-                onClick={() => setWhiteboardMode('collaborate')}
-                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                  whiteboardMode === 'collaborate' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
-                }`}
-              >
-                Colaborar
-              </button>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-              <Save className="w-4 h-4" />
-            </button>
-            <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-              <Download className="w-4 h-4" />
-            </button>
-            <button className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors">
-              <Share2 className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-        
-        {/* Templates */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Templates:</label>
-          <div className="flex space-x-2">
-            {templates.map(template => (
-              <button
-                key={template.id}
-                onClick={() => setSelectedTemplate(template.id)}
-                className={`px-3 py-2 rounded-lg text-sm transition-colors flex items-center space-x-2 ${
-                  selectedTemplate === template.id 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <span>{template.preview}</span>
-                <span>{template.nome}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-        
-        {/* Camadas */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Camadas:</label>
-          <div className="space-y-2">
-            {whiteboardLayers.map(layer => (
-              <div key={layer.id} className="flex items-center justify-between bg-white p-2 rounded border">
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setWhiteboardLayers(prev => 
-                      prev.map(l => l.id === layer.id ? { ...l, visible: !l.visible } : l)
-                    )}
-                    className={`p-1 rounded ${layer.visible ? 'text-blue-600' : 'text-gray-400'}`}
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
-                  <span className="text-sm">{layer.name}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <button
-                    onClick={() => setWhiteboardLayers(prev => 
-                      prev.map(l => l.id === layer.id ? { ...l, locked: !l.locked } : l)
-                    )}
-                    className={`p-1 rounded ${layer.locked ? 'text-red-600' : 'text-gray-400'}`}
-                  >
-                    <Lock className="w-4 h-4" />
-                  </button>
-                  <button className="p-1 text-gray-400 hover:text-gray-600 rounded">
-                    <Edit2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const [licencas, setLicencas] = useState<Licenca[]>([
+    {
+      id: '1',
+      clienteId: '1',
+      software: 'Microsoft 365',
+      usuarios: 50,
+      custoMensal: 2500,
+      dataInicio: '2024-01-01',
+      dataFim: '2024-12-31',
+      status: 'Ativa',
+      fornecedor: 'Microsoft',
+      produtoId: '1'
+    }
+  ]);
 
-  const renderDocuments = () => (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-gray-900">Documentos Compartilhados</h4>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 transition-colors">
-          <Upload className="w-4 h-4" />
-          <span>Upload</span>
-        </button>
-      </div>
-      
-      <div className="space-y-3">
-        {documentosCompartilhados.map(doc => (
-          <div key={doc.id} className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">{doc.nome}</p>
-                  <p className="text-sm text-gray-500">{doc.tamanho} • Por {doc.autor}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                  <Eye className="w-4 h-4" />
-                </button>
-                <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                  <Download className="w-4 h-4" />
-                </button>
-                <button className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors">
-                  <Share2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  const [planosVenda, setPlanosVenda] = useState<PlanoVenda[]>([]);
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [reunioes, setReunioes] = useState<Reuniao[]>([]);
+  const [contatos, setContatos] = useState<ContatoCliente[]>([]);
 
-  const renderPolls = () => (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-gray-900">Enquetes e Votações</h4>
-        <button className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-700 transition-colors">
-          <Plus className="w-4 h-4" />
-          <span>Nova Enquete</span>
-        </button>
-      </div>
-      
-      <div className="space-y-4">
-        {enquetes.map(enquete => (
-          <div key={enquete.id} className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h5 className="font-medium text-gray-900">{enquete.pergunta}</h5>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                enquete.ativa ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-              }`}>
-                {enquete.ativa ? 'Ativa' : 'Encerrada'}
-              </span>
-            </div>
-            
-            <div className="space-y-2">
-              {enquete.opcoes.map((opcao, index) => {
-                const totalVotos = enquete.votos.reduce((sum, v) => sum + v, 0);
-                const percentual = totalVotos > 0 ? (enquete.votos[index] / totalVotos) * 100 : 0;
-                
-                return (
-                  <div key={index} className="flex items-center justify-between">
-                    <div className="flex-1 mr-4">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm text-gray-700">{opcao}</span>
-                        <span className="text-sm font-medium text-gray-900">
-                          {enquete.votos[index]} ({percentual.toFixed(1)}%)
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${percentual}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                    {enquete.ativa && (
-                      <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors">
-                        Votar
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  // Estados de empresa
+  const [empresas, setEmpresas] = useState<Empresa[]>([
+    {
+      id: '1',
+      razaoSocial: 'HD Soluções ISP Ltda',
+      nomeFantasia: 'HD Soluções ISP',
+      cnpj: '12.345.678/0001-90',
+      inscricaoEstadual: '123456789',
+      email: 'contato@hdsolucoesisp.com',
+      telefone: '(11) 3333-4444',
+      endereco: {
+        logradouro: 'Rua das Empresas',
+        numero: '123',
+        bairro: 'Centro',
+        cidade: 'São Paulo',
+        estado: 'SP',
+        cep: '01000-000'
+      },
+      configuracoes: {
+        moeda: 'BRL',
+        timezone: 'America/Sao_Paulo',
+        formatoData: 'DD/MM/YYYY'
+      },
+      ativa: true,
+      criadoEm: '2024-01-01',
+      atualizadoEm: '2024-01-01'
+    }
+  ]);
 
-  const renderBreakoutRooms = () => (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-gray-900">Salas Simultâneas</h4>
-        <button className="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-purple-700 transition-colors">
-          <Plus className="w-4 h-4" />
-          <span>Criar Sala</span>
-        </button>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {salasSimultaneas.map(sala => (
-          <div key={sala.id} className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <Users className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">{sala.nome}</p>
-                  <p className="text-sm text-gray-500">{sala.participantes} participantes</p>
-                </div>
-              </div>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                sala.ativa ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-              }`}>
-                {sala.ativa ? 'Ativa' : 'Inativa'}
-              </span>
-            </div>
-            
-            <div className="flex space-x-2">
-              <button className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
-                Entrar
-              </button>
-              <button className="flex-1 bg-gray-600 text-white py-2 rounded-lg text-sm hover:bg-gray-700 transition-colors">
-                Monitorar
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-center space-x-2 mb-2">
-          <Users className="w-5 h-5 text-blue-600" />
-          <span className="font-medium text-blue-900">Configurações de Salas</span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span>Criação automática</span>
-              <input type="checkbox" className="rounded" />
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Rotação automática</span>
-              <input type="checkbox" className="rounded" />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span>Tempo limite</span>
-              <select className="px-2 py-1 border rounded text-xs">
-                <option>15 min</option>
-                <option>30 min</option>
-                <option>60 min</option>
-              </select>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Máx. participantes</span>
-              <select className="px-2 py-1 border rounded text-xs">
-                <option>4</option>
-                <option>6</option>
-                <option>8</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const [filiais, setFiliais] = useState<Filial[]>([
+    {
+      id: '1',
+      empresaId: '1',
+      codigo: '001',
+      nome: 'Matriz São Paulo',
+      isMatriz: true,
+      email: 'matriz@hdsolucoesisp.com',
+      telefone: '(11) 3333-4444',
+      endereco: {
+        logradouro: 'Rua das Empresas',
+        numero: '123',
+        bairro: 'Centro',
+        cidade: 'São Paulo',
+        estado: 'SP',
+        cep: '01000-000'
+      },
+      responsavel: {
+        nome: 'João Silva',
+        email: 'joao@hdsolucoesisp.com',
+        telefone: '(11) 99999-9999',
+        cargo: 'Gerente Geral'
+      },
+      configuracoes: {
+        permiteVendas: true,
+        permiteCompras: true,
+        permiteEstoque: true,
+        centroCusto: 'CC-001'
+      },
+      ativa: true,
+      criadoEm: '2024-01-01',
+      atualizadoEm: '2024-01-01'
+    }
+  ]);
 
-  const renderAITools = () => (
-    <div className="space-y-4">
-      <h4 className="font-semibold text-gray-900 flex items-center space-x-2">
-        <Brain className="w-5 h-5 text-purple-600" />
-        <span>Ferramentas de IA</span>
-      </h4>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4">
-          <div className="flex items-center space-x-3 mb-3">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Brain className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <h5 className="font-medium text-gray-900">Transcrição Inteligente</h5>
-              <p className="text-sm text-gray-600">OpenAI Whisper</p>
-            </div>
-          </div>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Idioma detectado:</span>
-              <span className="font-medium">Português (BR)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Confiança:</span>
-              <span className="font-medium text-green-600">98.5%</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Palavras transcritas:</span>
-              <span className="font-medium">1,247</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-center space-x-3 mb-3">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <Target className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <h5 className="font-medium text-gray-900">Análise de Sentimento</h5>
-              <p className="text-sm text-gray-600">GPT-4 Analysis</p>
-            </div>
-          </div>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Sentimento geral:</span>
-              <span className="font-medium text-green-600">Positivo</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Engajamento:</span>
-              <span className="font-medium text-blue-600">Alto</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Decisões identificadas:</span>
-              <span className="font-medium">7</span>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-4">
-          <div className="flex items-center space-x-3 mb-3">
-            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-              <Zap className="w-5 h-5 text-orange-600" />
-            </div>
-            <div>
-              <h5 className="font-medium text-gray-900">Insights Automáticos</h5>
-              <p className="text-sm text-gray-600">Machine Learning</p>
-            </div>
-          </div>
-          <div className="space-y-2 text-sm">
-            <div className="bg-white p-2 rounded border-l-4 border-orange-500">
-              <p className="text-orange-800">Tópico mais discutido: Implementação ERP</p>
-            </div>
-            <div className="bg-white p-2 rounded border-l-4 border-blue-500">
-              <p className="text-blue-800">Próximo passo sugerido: Definir cronograma</p>
-            </div>
-            <div className="bg-white p-2 rounded border-l-4 border-green-500">
-              <p className="text-green-800">Consenso alcançado: Orçamento aprovado</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-4">
-          <div className="flex items-center space-x-3 mb-3">
-            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <FileText className="w-5 h-5 text-indigo-600" />
-            </div>
-            <div>
-              <h5 className="font-medium text-gray-900">Geração de Atas</h5>
-              <p className="text-sm text-gray-600">Automática</p>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <button className="w-full bg-indigo-600 text-white py-2 rounded-lg text-sm hover:bg-indigo-700 transition-colors">
-              Gerar Ata Automática
-            </button>
-            <button className="w-full bg-white border border-indigo-300 text-indigo-600 py-2 rounded-lg text-sm hover:bg-indigo-50 transition-colors">
-              Personalizar Template
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const [empresaSelecionada, setEmpresaSelecionada] = useState<Empresa | null>(empresas[0] || null);
+  const [filialAtiva, setFilialAtiva] = useState<Filial | null>(filiais[0] || null);
+
+  // Estados de usuário
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [perfisUsuario] = useState<PerfilUsuario[]>([
+    {
+      id: '1',
+      nome: 'Administrador',
+      descricao: 'Acesso total ao sistema',
+      nivel: 'admin',
+      permissoesPadrao: {
+        dashboard: { visualizar: true, criar: true, editar: true, excluir: true },
+        empresas: { visualizar: true, criar: true, editar: true, excluir: true },
+        clientes: { visualizar: true, criar: true, editar: true, excluir: true },
+        contratos: { visualizar: true, criar: true, editar: true, excluir: true },
+        faturas: { visualizar: true, criar: true, editar: true, excluir: true },
+        licencas: { visualizar: true, criar: true, editar: true, excluir: true },
+        produtos: { visualizar: true, criar: true, editar: true, excluir: true },
+        vendas: { visualizar: true, criar: true, editar: true, excluir: true },
+        contabilidade: { visualizar: true, criar: true, editar: true, excluir: true },
+        contasPagar: { visualizar: true, criar: true, editar: true, excluir: true },
+        contasReceber: { visualizar: true, criar: true, editar: true, excluir: true },
+        reunioes: { visualizar: true, criar: true, editar: true, excluir: true },
+        projetos: { visualizar: true, criar: true, editar: true, excluir: true },
+        consultoriaMensal: { visualizar: true, criar: true, editar: true, excluir: true },
+        rh: { visualizar: true, criar: true, editar: true, excluir: true },
+        usuarios: { visualizar: true, criar: true, editar: true, excluir: true },
+        relatorios: { visualizar: true, criar: true, editar: true, excluir: true, exportar: true },
+        auditoria: { visualizar: true, criar: true, editar: true, excluir: true },
+        configuracoes: { visualizar: true, criar: true, editar: true, excluir: true }
+      },
+      ativo: true,
+      criadoEm: '2024-01-01'
+    }
+  ]);
+
+  const [usuarioLogado, setUsuarioLogado] = useState<Usuario | null>({
+    id: '1',
+    email: 'admin@consultorpro.com',
+    senha: 'admin123',
+    nome: 'Administrador',
+    ativo: true,
+    colaboradorId: '1',
+    empresaId: '1',
+    perfil: perfisUsuario[0],
+    permissoes: perfisUsuario[0].permissoesPadrao,
+    criadoEm: '2024-01-01',
+    atualizadoEm: '2024-01-01'
+  });
+
+  // Estados de RH
+  const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
+  const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
+  const [setores, setSetores] = useState<Setor[]>([]);
+
+  // Estados de agenda
+  const [eventosAgenda, setEventosAgenda] = useState<EventoAgenda[]>([]);
+
+  // Estados básicos (vazios por enquanto)
+  const [contasContabeis] = useState<any[]>([]);
+  const [lancamentosContabeis] = useState<any[]>([]);
+  const [fornecedores] = useState<any[]>([]);
+  const [contasPagar] = useState<any[]>([]);
+  const [contasBancarias] = useState<any[]>([]);
+  const [pagamentosConta] = useState<any[]>([]);
+  const [performanceMensal] = useState<any[]>([]);
+  const [metasMensais] = useState<any[]>([]);
+  const [diagnosticosMensais] = useState<any[]>([]);
+  const [acoesConsultoria] = useState<any[]>([]);
+  const [processosCliente] = useState<any[]>([]);
+  const [briefingsReuniao] = useState<any[]>([]);
+  const [oportunidadesNegocio] = useState<any[]>([]);
+  const [eventosLinhaTempo] = useState<any[]>([]);
+  const [relatoriosMensais] = useState<any[]>([]);
+  const [consultoriasMensais] = useState<any[]>([]);
+  const [carteirasCobranca] = useState<any[]>([]);
+  const [modelosContrato] = useState<any[]>([]);
+  const [regrasCobranca] = useState<any[]>([]);
+  const [historicoCobranca] = useState<any[]>([]);
+  const [logsCobranca] = useState<any[]>([]);
+  const [vendas] = useState<any[]>([]);
+  const [condicoesPagamento] = useState<any[]>([]);
+
+  // Seleções
+  const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(null);
+
+  // Funções de cliente
+  const adicionarCliente = (cliente: Cliente) => {
+    setClientes(prev => [...prev, cliente]);
+  };
+
+  const atualizarCliente = (id: string, dados: Partial<Cliente>) => {
+    setClientes(prev => prev.map(c => c.id === id ? { ...c, ...dados } : c));
+  };
+
+  // Funções de contrato
+  const adicionarContrato = (contrato: Contrato) => {
+    setContratos(prev => [...prev, contrato]);
+  };
+
+  const atualizarContrato = (id: string, dados: Partial<Contrato>) => {
+    setContratos(prev => prev.map(c => c.id === id ? { ...c, ...dados } : c));
+  };
+
+  // Funções de fatura
+  const adicionarFatura = (fatura: Fatura) => {
+    setFaturas(prev => [...prev, fatura]);
+  };
+
+  const atualizarFatura = (id: string, dados: Partial<Fatura>) => {
+    setFaturas(prev => prev.map(f => f.id === id ? { ...f, ...dados } : f));
+  };
+
+  // Funções de licença
+  const adicionarLicenca = (licenca: Licenca) => {
+    setLicencas(prev => [...prev, licenca]);
+  };
+
+  const atualizarLicenca = (id: string, dados: Partial<Licenca>) => {
+    setLicencas(prev => prev.map(l => l.id === id ? { ...l, ...dados } : l));
+  };
+
+  // Funções de plano de venda
+  const adicionarPlanoVenda = (plano: PlanoVenda) => {
+    setPlanosVenda(prev => [...prev, plano]);
+  };
+
+  const atualizarPlanoVenda = (id: string, dados: Partial<PlanoVenda>) => {
+    setPlanosVenda(prev => prev.map(p => p.id === id ? { ...p, ...dados } : p));
+  };
+
+  // Funções de produto
+  const adicionarProduto = (produto: Produto) => {
+    setProdutos(prev => [...prev, produto]);
+  };
+
+  const atualizarProduto = (id: string, dados: Partial<Produto>) => {
+    setProdutos(prev => prev.map(p => p.id === id ? { ...p, ...dados } : p));
+  };
+
+  // Funções de reunião
+  const adicionarReuniao = (reuniao: Reuniao) => {
+    setReunioes(prev => [...prev, reuniao]);
+  };
+
+  const atualizarReuniao = (id: string, dados: Partial<Reuniao>) => {
+    setReunioes(prev => prev.map(r => r.id === id ? { ...r, ...dados } : r));
+  };
+
+  // Funções de contato
+  const adicionarContato = (contato: ContatoCliente) => {
+    setContatos(prev => [...prev, contato]);
+  };
+
+  const atualizarContato = (id: string, dados: Partial<ContatoCliente>) => {
+    setContatos(prev => prev.map(c => c.id === id ? { ...c, ...dados } : c));
+  };
+
+  const excluirContato = (id: string) => {
+    setContatos(prev => prev.filter(c => c.id !== id));
+  };
+
+  // Funções de empresa
+  const adicionarEmpresa = (empresa: Empresa) => {
+    setEmpresas(prev => [...prev, empresa]);
+  };
+
+  const atualizarEmpresa = (id: string, dados: Partial<Empresa>) => {
+    setEmpresas(prev => prev.map(e => e.id === id ? { ...e, ...dados } : e));
+  };
+
+  const adicionarFilial = (filial: Filial) => {
+    setFiliais(prev => [...prev, filial]);
+  };
+
+  const atualizarFilial = (id: string, dados: Partial<Filial>) => {
+    setFiliais(prev => prev.map(f => f.id === id ? { ...f, ...dados } : f));
+  };
+
+  // Funções de usuário
+  const adicionarUsuario = (usuario: Usuario) => {
+    setUsuarios(prev => [...prev, usuario]);
+  };
+
+  const atualizarUsuario = (id: string, dados: Partial<Usuario>) => {
+    setUsuarios(prev => prev.map(u => u.id === id ? { ...u, ...dados } : u));
+  };
+
+  const login = (email: string, senha: string): boolean => {
+    if (email === 'admin@consultorpro.com' && senha === 'admin123') {
+      return true;
+    }
+    return false;
+  };
+
+  const logout = () => {
+    setUsuarioLogado(null);
+  };
+
+  // Funções de RH
+  const adicionarColaborador = (colaborador: Colaborador) => {
+    setColaboradores(prev => [...prev, colaborador]);
+  };
+
+  const atualizarColaborador = (id: string, dados: Partial<Colaborador>) => {
+    setColaboradores(prev => prev.map(c => c.id === id ? { ...c, ...dados } : c));
+  };
+
+  const adicionarDepartamento = (departamento: Departamento) => {
+    setDepartamentos(prev => [...prev, departamento]);
+  };
+
+  const atualizarDepartamento = (id: string, dados: Partial<Departamento>) => {
+    setDepartamentos(prev => prev.map(d => d.id === id ? { ...d, ...dados } : d));
+  };
+
+  const adicionarSetor = (setor: Setor) => {
+    setSetores(prev => [...prev, setor]);
+  };
+
+  const atualizarSetor = (id: string, dados: Partial<Setor>) => {
+    setSetores(prev => prev.map(s => s.id === id ? { ...s, ...dados } : s));
+  };
+
+  // Funções de agenda
+  const adicionarEventoAgenda = (evento: EventoAgenda) => {
+    setEventosAgenda(prev => [...prev, evento]);
+  };
+
+  const atualizarEventoAgenda = (id: string, dados: Partial<EventoAgenda>) => {
+    setEventosAgenda(prev => prev.map(e => e.id === id ? { ...e, ...dados } : e));
+  };
+
+  // Funções stub (implementação básica)
+  const adicionarContaContabil = () => {};
+  const atualizarContaContabil = () => {};
+  const excluirContaContabil = () => {};
+  const adicionarLancamentoContabil = () => {};
+  const adicionarFornecedor = () => {};
+  const atualizarFornecedor = () => {};
+  const adicionarContaPagar = () => {};
+  const atualizarContaPagar = () => {};
+  const adicionarContaBancaria = () => {};
+  const atualizarContaBancaria = () => {};
+  const realizarPagamento = () => {};
+  const gerarLancamentoPagamento = () => {};
+  const gerarRecorrencia = () => {};
+  const adicionarPerformanceMensal = () => {};
+  const atualizarPerformanceMensal = () => {};
+  const adicionarMetaMensal = () => {};
+  const atualizarMetaMensal = () => {};
+  const excluirMetaMensal = () => {};
+  const adicionarDiagnosticoMensal = () => {};
+  const atualizarDiagnosticoMensal = () => {};
+  const adicionarAcaoConsultoria = () => {};
+  const atualizarAcaoConsultoria = () => {};
+  const excluirAcaoConsultoria = () => {};
+  const adicionarProcessoCliente = () => {};
+  const atualizarProcessoCliente = () => {};
+  const adicionarBriefingReuniao = () => {};
+  const atualizarBriefingReuniao = () => {};
+  const adicionarOportunidadeNegocio = () => {};
+  const atualizarOportunidadeNegocio = () => {};
+  const excluirOportunidadeNegocio = () => {};
+  const adicionarEventoLinhaTempo = () => {};
+  const adicionarRelatorioMensal = () => {};
+  const adicionarCarteiraCobranca = () => {};
+  const atualizarCarteiraCobranca = () => {};
+  const adicionarModeloContrato = () => {};
+  const atualizarModeloContrato = () => {};
+  const adicionarRegraCobranca = () => {};
+  const atualizarRegraCobranca = () => {};
+
+  const value: AppContextType = {
+    // Estados
+    clientes,
+    contratos,
+    faturas,
+    licencas,
+    planosVenda,
+    produtos,
+    reunioes,
+    contatos,
+    empresas,
+    filiais,
+    empresaSelecionada,
+    filialAtiva,
+    usuarios,
+    perfisUsuario,
+    usuarioLogado,
+    colaboradores,
+    departamentos,
+    setores,
+    eventosAgenda,
+    contasContabeis,
+    lancamentosContabeis,
+    fornecedores,
+    contasPagar,
+    contasBancarias,
+    pagamentosConta,
+    performanceMensal,
+    metasMensais,
+    diagnosticosMensais,
+    acoesConsultoria,
+    processosCliente,
+    briefingsReuniao,
+    oportunidadesNegocio,
+    eventosLinhaTempo,
+    relatoriosMensais,
+    consultoriasMensais,
+    carteirasCobranca,
+    modelosContrato,
+    regrasCobranca,
+    historicoCobranca,
+    logsCobranca,
+    vendas,
+    condicoesPagamento,
+    clienteSelecionado,
+
+    // Funções
+    adicionarCliente,
+    atualizarCliente,
+    setClienteSelecionado,
+    adicionarContrato,
+    atualizarContrato,
+    adicionarFatura,
+    atualizarFatura,
+    adicionarLicenca,
+    atualizarLicenca,
+    adicionarPlanoVenda,
+    atualizarPlanoVenda,
+    adicionarProduto,
+    atualizarProduto,
+    adicionarReuniao,
+    atualizarReuniao,
+    adicionarContato,
+    atualizarContato,
+    excluirContato,
+    adicionarEmpresa,
+    atualizarEmpresa,
+    setEmpresaSelecionada,
+    adicionarFilial,
+    atualizarFilial,
+    adicionarUsuario,
+    atualizarUsuario,
+    login,
+    logout,
+    adicionarColaborador,
+    atualizarColaborador,
+    adicionarDepartamento,
+    atualizarDepartamento,
+    adicionarSetor,
+    atualizarSetor,
+    adicionarEventoAgenda,
+    atualizarEventoAgenda,
+    adicionarContaContabil,
+    atualizarContaContabil,
+    excluirContaContabil,
+    adicionarLancamentoContabil,
+    adicionarFornecedor,
+    atualizarFornecedor,
+    adicionarContaPagar,
+    atualizarContaPagar,
+    adicionarContaBancaria,
+    atualizarContaBancaria,
+    realizarPagamento,
+    gerarLancamentoPagamento,
+    gerarRecorrencia,
+    adicionarPerformanceMensal,
+    atualizarPerformanceMensal,
+    adicionarMetaMensal,
+    atualizarMetaMensal,
+    excluirMetaMensal,
+    adicionarDiagnosticoMensal,
+    atualizarDiagnosticoMensal,
+    adicionarAcaoConsultoria,
+    atualizarAcaoConsultoria,
+    excluirAcaoConsultoria,
+    adicionarProcessoCliente,
+    atualizarProcessoCliente,
+    adicionarBriefingReuniao,
+    atualizarBriefingReuniao,
+    adicionarOportunidadeNegocio,
+    atualizarOportunidadeNegocio,
+    excluirOportunidadeNegocio,
+    adicionarEventoLinhaTempo,
+    adicionarRelatorioMensal,
+    adicionarCarteiraCobranca,
+    atualizarCarteiraCobranca,
+    adicionarModeloContrato,
+    atualizarModeloContrato,
+    adicionarRegraCobranca,
+    atualizarRegraCobranca
+  };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-      <div className="border-b border-gray-200">
-        <nav className="flex space-x-8 px-6">
-          <button
-            onClick={() => setActiveTab('whiteboard')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'whiteboard'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            <div className="flex items-center space-x-2">
-              <Palette className="w-4 h-4" />
-              <span>Lousa Digital</span>
-            </div>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('documents')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'documents'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            <div className="flex items-center space-x-2">
-              <FileText className="w-4 h-4" />
-              <span>Documentos</span>
-            </div>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('polls')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'polls'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            <div className="flex items-center space-x-2">
-              <Target className="w-4 h-4" />
-              <span>Enquetes</span>
-            </div>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('breakout')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'breakout'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            <div className="flex items-center space-x-2">
-              <Users className="w-4 h-4" />
-              <span>Salas Simultâneas</span>
-            </div>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('ai-tools')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'ai-tools'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            <div className="flex items-center space-x-2">
-              <Brain className="w-4 h-4" />
-              <span>IA Tools</span>
-            </div>
-          </button>
-        </nav>
-      </div>
-
-      <div className="p-6">
-        {activeTab === 'whiteboard' && renderWhiteboard()}
-        {activeTab === 'documents' && renderDocuments()}
-        {activeTab === 'polls' && renderPolls()}
-        {activeTab === 'breakout' && renderBreakoutRooms()}
-        {activeTab === 'ai-tools' && renderAITools()}
-      </div>
-    </div>
+    <AppContext.Provider value={value}>
+      {children}
+    </AppContext.Provider>
   );
+}
+
+export function useApp() {
+  const context = useContext(AppContext);
+  if (context === undefined) {
+    throw new Error('useApp must be used within an AppProvider');
+  }
+  return context;
 }
